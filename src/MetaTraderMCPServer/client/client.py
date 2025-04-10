@@ -8,7 +8,7 @@ from datetime import datetime
 
 from .connection import MT5Connection
 from .account import MT5Account
-from .market import MT5Market, TimeFrame, CopyTicksMode
+from .market import MT5Market
 from .orders import MT5Orders, OrderType, OrderFilling, OrderTime, TradeAction
 from .history import MT5History, DealType, OrderState
 from .exceptions import MT5ClientError
@@ -34,7 +34,7 @@ class MT5Client:
         self._config = config or {}
         self._connection = MT5Connection(config)
         self._account = MT5Account(self._connection)
-        self._market = MT5Market(self._connection)
+        self.market = MT5Market(self._connection)
         self._orders = MT5Orders(self._connection)
         self._history = MT5History(self._connection)
     
@@ -225,285 +225,286 @@ class MT5Client:
         """
         return self._market.get_symbols(group)
     
-    def get_symbol_info(self, symbol: str) -> Dict[str, Any]:
-        """
-        Get detailed information about a specific symbol.
-        
-        Returns a dictionary with symbol properties including point value,
-        digits, contract size, etc.
-        
-        Args:
-            symbol: Symbol name.
-            
-        Returns:
-            Dict[str, Any]: Symbol information.
-            
-        Raises:
-            MarketError: If symbol information cannot be retrieved.
-            ConnectionError: If not connected to terminal.
-        """
-        return self._market.get_symbol_info(symbol)
     
-    def get_symbol_price(self, symbol: str) -> Dict[str, float]:
-        """
-        Get current price for a symbol.
+    # def get_symbol_info(self, symbol: str) -> Dict[str, Any]:
+    #     """
+    #     Get detailed information about a specific symbol.
         
-        Args:
-            symbol: Symbol name.
-            
-        Returns:
-            Dict[str, float]: Dictionary with price information (bid, ask, last, etc.).
-            
-        Raises:
-            MarketError: If prices cannot be retrieved.
-            ConnectionError: If not connected to terminal.
-        """
-        return self._market.get_symbol_price(symbol)
-    
-    def get_candles(
-        self, 
-        symbol: str, 
-        timeframe: Union[TimeFrame, str, int], 
-        from_date: Optional[datetime] = None,
-        to_date: Optional[datetime] = None,
-        count: Optional[int] = None
-    ) -> List[Dict[str, Any]]:
-        """
-        Get historical price data (OHLCV) for a symbol.
+    #     Returns a dictionary with symbol properties including point value,
+    #     digits, contract size, etc.
         
-        Args:
-            symbol: Symbol name.
-            timeframe: Timeframe (can be TimeFrame enum, string like "M1", or integer).
-            from_date: Start date for historical data (optional).
-            to_date: End date for historical data (optional).
-            count: Maximum number of candles to retrieve (optional).
+    #     Args:
+    #         symbol: Symbol name.
             
-        Returns:
-            List[Dict[str, Any]]: List of candles with OHLCV data.
+    #     Returns:
+    #         Dict[str, Any]: Symbol information.
             
-        Raises:
-            MarketError: If historical data cannot be retrieved.
-            ConnectionError: If not connected to terminal.
-        """
-        return self._market.get_candles(symbol, timeframe, from_date, to_date, count)
+    #     Raises:
+    #         MarketError: If symbol information cannot be retrieved.
+    #         ConnectionError: If not connected to terminal.
+    #     """
+    #     return self._market.get_symbol_info(symbol)
     
-    def get_ticks(
-        self,
-        symbol: str,
-        from_date: datetime,
-        to_date: Optional[datetime] = None,
-        count: Optional[int] = None,
-        mode: CopyTicksMode = CopyTicksMode.ALL
-    ) -> List[Dict[str, Any]]:
-        """
-        Get tick data for a symbol.
+    # def get_symbol_price(self, symbol: str) -> Dict[str, float]:
+    #     """
+    #     Get current price for a symbol.
         
-        Args:
-            symbol: Symbol name.
-            from_date: Start date for tick data.
-            to_date: End date for tick data (optional).
-            count: Maximum number of ticks to retrieve (optional).
-            mode: Type of ticks to retrieve (default: ALL).
+    #     Args:
+    #         symbol: Symbol name.
             
-        Returns:
-            List[Dict[str, Any]]: List of ticks with price data.
+    #     Returns:
+    #         Dict[str, float]: Dictionary with price information (bid, ask, last, etc.).
             
-        Raises:
-            MarketError: If tick data cannot be retrieved.
-            ConnectionError: If not connected to terminal.
-        """
-        return self._market.get_ticks(symbol, from_date, to_date, count, mode)
+    #     Raises:
+    #         MarketError: If prices cannot be retrieved.
+    #         ConnectionError: If not connected to terminal.
+    #     """
+    #     return self._market.get_symbol_price(symbol)
     
-    def select_symbol(self, symbol: str, enable: bool = True) -> bool:
-        """
-        Add or remove a symbol from the Market Watch window.
+    # def get_candles(
+    #     self, 
+    #     symbol: str, 
+    #     timeframe: Union[TimeFrame, str, int], 
+    #     from_date: Optional[datetime] = None,
+    #     to_date: Optional[datetime] = None,
+    #     count: Optional[int] = None
+    # ) -> List[Dict[str, Any]]:
+    #     """
+    #     Get historical price data (OHLCV) for a symbol.
         
-        Args:
-            symbol: Symbol name.
-            enable: True to add, False to remove.
+    #     Args:
+    #         symbol: Symbol name.
+    #         timeframe: Timeframe (can be TimeFrame enum, string like "M1", or integer).
+    #         from_date: Start date for historical data (optional).
+    #         to_date: End date for historical data (optional).
+    #         count: Maximum number of candles to retrieve (optional).
             
-        Returns:
-            bool: True if operation was successful.
+    #     Returns:
+    #         List[Dict[str, Any]]: List of candles with OHLCV data.
             
-        Raises:
-            MarketError: If symbol selection fails.
-            ConnectionError: If not connected to terminal.
-        """
-        return self._market.select_symbol(symbol, enable)
+    #     Raises:
+    #         MarketError: If historical data cannot be retrieved.
+    #         ConnectionError: If not connected to terminal.
+    #     """
+    #     return self._market.get_candles(symbol, timeframe, from_date, to_date, count)
     
-    # Order methods
-    
-    def execute_trade(
-        self, 
-        symbol: str, 
-        order_type: Union[OrderType, str], 
-        volume: float, 
-        price: Optional[float] = None,
-        stop_loss: Optional[float] = None,
-        take_profit: Optional[float] = None,
-        deviation: Optional[int] = None,
-        magic: Optional[int] = None,
-        comment: Optional[str] = None,
-        type_filling: Optional[OrderFilling] = None,
-        type_time: Optional[OrderTime] = None,
-        expiration: Optional[datetime] = None
-    ) -> Dict[str, Any]:
-        """
-        Execute a trade order.
+    # def get_ticks(
+    #     self,
+    #     symbol: str,
+    #     from_date: datetime,
+    #     to_date: Optional[datetime] = None,
+    #     count: Optional[int] = None,
+    #     mode: CopyTicksMode = CopyTicksMode.ALL
+    # ) -> List[Dict[str, Any]]:
+    #     """
+    #     Get tick data for a symbol.
         
-        Args:
-            symbol: Symbol name.
-            order_type: Type of order (can be OrderType enum or string).
-            volume: Trade volume in lots.
-            price: Price for pending orders (optional).
-            stop_loss: Stop loss level (optional).
-            take_profit: Take profit level (optional).
-            deviation: Maximum price deviation in points (optional).
-            magic: Expert Advisor ID (optional).
-            comment: Order comment (optional).
-            type_filling: Order filling type (optional).
-            type_time: Order lifetime type (optional).
-            expiration: Order expiration time (optional).
+    #     Args:
+    #         symbol: Symbol name.
+    #         from_date: Start date for tick data.
+    #         to_date: End date for tick data (optional).
+    #         count: Maximum number of ticks to retrieve (optional).
+    #         mode: Type of ticks to retrieve (default: ALL).
             
-        Returns:
-            Dict[str, Any]: Order result information.
+    #     Returns:
+    #         List[Dict[str, Any]]: List of ticks with price data.
             
-        Raises:
-            OrderError: If order execution fails.
-            ConnectionError: If not connected to terminal.
-        """
-        # Convert string order type to enum if needed
-        if isinstance(order_type, str):
-            order_type = OrderType[order_type.upper()]
-            
-        return self._orders.execute_trade(
-            symbol, order_type, volume, price, stop_loss, take_profit, 
-            deviation, magic, comment, type_filling, type_time, expiration
-        )
+    #     Raises:
+    #         MarketError: If tick data cannot be retrieved.
+    #         ConnectionError: If not connected to terminal.
+    #     """
+    #     return self._market.get_ticks(symbol, from_date, to_date, count, mode)
     
-    def modify_order(
-        self,
-        ticket: int,
-        price: Optional[float] = None,
-        stop_loss: Optional[float] = None,
-        take_profit: Optional[float] = None,
-        type_time: Optional[OrderTime] = None,
-        expiration: Optional[datetime] = None
-    ) -> bool:
-        """
-        Modify an existing pending order.
+    # def select_symbol(self, symbol: str, enable: bool = True) -> bool:
+    #     """
+    #     Add or remove a symbol from the Market Watch window.
         
-        Args:
-            ticket: Order ticket number.
-            price: New price for pending orders (optional).
-            stop_loss: New stop loss level (optional).
-            take_profit: New take profit level (optional).
-            type_time: New order lifetime type (optional).
-            expiration: New order expiration time (optional).
+    #     Args:
+    #         symbol: Symbol name.
+    #         enable: True to add, False to remove.
             
-        Returns:
-            bool: True if modification was successful.
+    #     Returns:
+    #         bool: True if operation was successful.
             
-        Raises:
-            OrderError: If order modification fails.
-            ConnectionError: If not connected to terminal.
-        """
-        return self._orders.modify_order(ticket, price, stop_loss, take_profit, type_time, expiration)
+    #     Raises:
+    #         MarketError: If symbol selection fails.
+    #         ConnectionError: If not connected to terminal.
+    #     """
+    #     return self._market.select_symbol(symbol, enable)
     
-    def modify_position(
-        self,
-        ticket: int,
-        stop_loss: Optional[float] = None,
-        take_profit: Optional[float] = None
-    ) -> bool:
-        """
-        Modify stop loss and take profit for an open position.
-        
-        Args:
-            ticket: Position ticket number.
-            stop_loss: New stop loss level (optional).
-            take_profit: New take profit level (optional).
-            
-        Returns:
-            bool: True if modification was successful.
-            
-        Raises:
-            OrderError: If position modification fails.
-            ConnectionError: If not connected to terminal.
-        """
-        return self._orders.modify_position(ticket, stop_loss, take_profit)
+    # # Order methods
     
-    def close_position(
-        self,
-        ticket: int,
-        volume: Optional[float] = None
-    ) -> bool:
-        """
-        Close an existing position.
+    # def execute_trade(
+    #     self, 
+    #     symbol: str, 
+    #     order_type: Union[OrderType, str], 
+    #     volume: float, 
+    #     price: Optional[float] = None,
+    #     stop_loss: Optional[float] = None,
+    #     take_profit: Optional[float] = None,
+    #     deviation: Optional[int] = None,
+    #     magic: Optional[int] = None,
+    #     comment: Optional[str] = None,
+    #     type_filling: Optional[OrderFilling] = None,
+    #     type_time: Optional[OrderTime] = None,
+    #     expiration: Optional[datetime] = None
+    # ) -> Dict[str, Any]:
+    #     """
+    #     Execute a trade order.
         
-        Args:
-            ticket: Position ticket number.
-            volume: Volume to close (partial close if less than position volume).
+    #     Args:
+    #         symbol: Symbol name.
+    #         order_type: Type of order (can be OrderType enum or string).
+    #         volume: Trade volume in lots.
+    #         price: Price for pending orders (optional).
+    #         stop_loss: Stop loss level (optional).
+    #         take_profit: Take profit level (optional).
+    #         deviation: Maximum price deviation in points (optional).
+    #         magic: Expert Advisor ID (optional).
+    #         comment: Order comment (optional).
+    #         type_filling: Order filling type (optional).
+    #         type_time: Order lifetime type (optional).
+    #         expiration: Order expiration time (optional).
             
-        Returns:
-            bool: True if close operation was successful.
+    #     Returns:
+    #         Dict[str, Any]: Order result information.
             
-        Raises:
-            OrderError: If position closing fails.
-            ConnectionError: If not connected to terminal.
-        """
-        return self._orders.close_position(ticket, volume)
+    #     Raises:
+    #         OrderError: If order execution fails.
+    #         ConnectionError: If not connected to terminal.
+    #     """
+    #     # Convert string order type to enum if needed
+    #     if isinstance(order_type, str):
+    #         order_type = OrderType[order_type.upper()]
+            
+    #     return self._orders.execute_trade(
+    #         symbol, order_type, volume, price, stop_loss, take_profit, 
+    #         deviation, magic, comment, type_filling, type_time, expiration
+    #     )
     
-    def delete_order(
-        self,
-        ticket: int
-    ) -> bool:
-        """
-        Delete a pending order.
+    # def modify_order(
+    #     self,
+    #     ticket: int,
+    #     price: Optional[float] = None,
+    #     stop_loss: Optional[float] = None,
+    #     take_profit: Optional[float] = None,
+    #     type_time: Optional[OrderTime] = None,
+    #     expiration: Optional[datetime] = None
+    # ) -> bool:
+    #     """
+    #     Modify an existing pending order.
         
-        Args:
-            ticket: Order ticket number.
+    #     Args:
+    #         ticket: Order ticket number.
+    #         price: New price for pending orders (optional).
+    #         stop_loss: New stop loss level (optional).
+    #         take_profit: New take profit level (optional).
+    #         type_time: New order lifetime type (optional).
+    #         expiration: New order expiration time (optional).
             
-        Returns:
-            bool: True if deletion was successful.
+    #     Returns:
+    #         bool: True if modification was successful.
             
-        Raises:
-            OrderError: If order deletion fails.
-            ConnectionError: If not connected to terminal.
-        """
-        return self._orders.delete_order(ticket)
+    #     Raises:
+    #         OrderError: If order modification fails.
+    #         ConnectionError: If not connected to terminal.
+    #     """
+    #     return self._orders.modify_order(ticket, price, stop_loss, take_profit, type_time, expiration)
     
-    def get_orders(self, symbol: Optional[str] = None) -> List[Dict[str, Any]]:
-        """
-        Get list of all active pending orders.
+    # def modify_position(
+    #     self,
+    #     ticket: int,
+    #     stop_loss: Optional[float] = None,
+    #     take_profit: Optional[float] = None
+    # ) -> bool:
+    #     """
+    #     Modify stop loss and take profit for an open position.
         
-        Args:
-            symbol: Filter orders by symbol (optional).
+    #     Args:
+    #         ticket: Position ticket number.
+    #         stop_loss: New stop loss level (optional).
+    #         take_profit: New take profit level (optional).
             
-        Returns:
-            List[Dict[str, Any]]: List of pending orders.
+    #     Returns:
+    #         bool: True if modification was successful.
             
-        Raises:
-            OrderError: If orders cannot be retrieved.
-            ConnectionError: If not connected to terminal.
-        """
-        return self._orders.get_orders(symbol)
+    #     Raises:
+    #         OrderError: If position modification fails.
+    #         ConnectionError: If not connected to terminal.
+    #     """
+    #     return self._orders.modify_position(ticket, stop_loss, take_profit)
     
-    def get_positions(self, symbol: Optional[str] = None) -> List[Dict[str, Any]]:
-        """
-        Get list of all open positions.
+    # def close_position(
+    #     self,
+    #     ticket: int,
+    #     volume: Optional[float] = None
+    # ) -> bool:
+    #     """
+    #     Close an existing position.
         
-        Args:
-            symbol: Filter positions by symbol (optional).
+    #     Args:
+    #         ticket: Position ticket number.
+    #         volume: Volume to close (partial close if less than position volume).
             
-        Returns:
-            List[Dict[str, Any]]: List of open positions.
+    #     Returns:
+    #         bool: True if close operation was successful.
             
-        Raises:
-            OrderError: If positions cannot be retrieved.
-            ConnectionError: If not connected to terminal.
-        """
-        return self._orders.get_positions(symbol)
+    #     Raises:
+    #         OrderError: If position closing fails.
+    #         ConnectionError: If not connected to terminal.
+    #     """
+    #     return self._orders.close_position(ticket, volume)
+    
+    # def delete_order(
+    #     self,
+    #     ticket: int
+    # ) -> bool:
+    #     """
+    #     Delete a pending order.
+        
+    #     Args:
+    #         ticket: Order ticket number.
+            
+    #     Returns:
+    #         bool: True if deletion was successful.
+            
+    #     Raises:
+    #         OrderError: If order deletion fails.
+    #         ConnectionError: If not connected to terminal.
+    #     """
+    #     return self._orders.delete_order(ticket)
+    
+    # def get_orders(self, symbol: Optional[str] = None) -> List[Dict[str, Any]]:
+    #     """
+    #     Get list of all active pending orders.
+        
+    #     Args:
+    #         symbol: Filter orders by symbol (optional).
+            
+    #     Returns:
+    #         List[Dict[str, Any]]: List of pending orders.
+            
+    #     Raises:
+    #         OrderError: If orders cannot be retrieved.
+    #         ConnectionError: If not connected to terminal.
+    #     """
+    #     return self._orders.get_orders(symbol)
+    
+    # def get_positions(self, symbol: Optional[str] = None) -> List[Dict[str, Any]]:
+    #     """
+    #     Get list of all open positions.
+        
+    #     Args:
+    #         symbol: Filter positions by symbol (optional).
+            
+    #     Returns:
+    #         List[Dict[str, Any]]: List of open positions.
+            
+    #     Raises:
+    #         OrderError: If positions cannot be retrieved.
+    #         ConnectionError: If not connected to terminal.
+    #     """
+    #     return self._orders.get_positions(symbol)
     
     # History methods
     

@@ -71,6 +71,21 @@ class SymbolError(MarketError):
     pass
 
 
+class SymbolNotFoundError(SymbolError):
+    """Exception raised when a symbol is not found."""
+    pass
+
+
+class InvalidTimeframeError(MarketError):
+    """Exception raised when an invalid timeframe is provided."""
+    pass
+
+
+class MarketDataError(MarketError):
+    """Exception raised when market data cannot be retrieved."""
+    pass
+
+
 class PriceError(MarketError):
     """Exception raised when price data cannot be retrieved."""
     pass
