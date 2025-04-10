@@ -20,6 +20,10 @@ from tests.client.account import (
     TestMT5AccountUnit, TestMT5AccountIntegration, 
     TestMT5AccountNoConnection, simple_account_test
 )
+from tests.client.history import (
+    TestMT5HistoryUnit, TestMT5HistoryIntegration,
+    TestMT5HistoryNoConnection, TestMT5HistoryParameterPassing, simple_test as simple_history_test
+)
 
 
 def run_unit_tests(verbosity=2):
@@ -34,6 +38,14 @@ def run_unit_tests(verbosity=2):
     # Add account unit tests with mocks
     account_suite = unittest.TestLoader().loadTestsFromTestCase(TestMT5AccountUnit)
     suite.addTest(account_suite)
+    
+    # Add history unit tests with mocks
+    history_suite = unittest.TestLoader().loadTestsFromTestCase(TestMT5HistoryUnit)
+    suite.addTest(history_suite)
+    
+    # Add history parameter passing tests
+    history_param_suite = unittest.TestLoader().loadTestsFromTestCase(TestMT5HistoryParameterPassing)
+    suite.addTest(history_param_suite)
     
     # Run the suite
     start_time = time.time()
@@ -61,9 +73,17 @@ def run_integration_tests(verbosity=2):
     account_suite = unittest.TestLoader().loadTestsFromTestCase(TestMT5AccountIntegration)
     suite.addTest(account_suite)
     
-    # Add no connection test
-    no_connection_suite = unittest.TestLoader().loadTestsFromTestCase(TestMT5AccountNoConnection)
-    suite.addTest(no_connection_suite)
+    # Add account no connection tests
+    account_no_conn_suite = unittest.TestLoader().loadTestsFromTestCase(TestMT5AccountNoConnection)
+    suite.addTest(account_no_conn_suite)
+    
+    # Add history integration tests
+    history_suite = unittest.TestLoader().loadTestsFromTestCase(TestMT5HistoryIntegration)
+    suite.addTest(history_suite)
+    
+    # Add history no connection tests
+    history_no_conn_suite = unittest.TestLoader().loadTestsFromTestCase(TestMT5HistoryNoConnection)
+    suite.addTest(history_no_conn_suite)
     
     # Run the suite
     start_time = time.time()
@@ -159,6 +179,47 @@ def run_account_tests(verbosity=2):
     return result
 
 
+def run_history_tests(verbosity=2):
+    """
+    Run history tests, choosing unit or integration based on settings.
+    """
+    print("\n📊 Running history tests for MetaTrader MCP Server...")
+    
+    # Create a test suite
+    suite = unittest.TestSuite()
+    
+    if USE_MOCKS == "always" or USE_MOCKS == "auto":
+        # Use unit tests with mocks
+        print("Using mocked MT5 connection for history tests...")
+        history_suite = unittest.TestLoader().loadTestsFromTestCase(TestMT5HistoryUnit)
+        suite.addTest(history_suite)
+        
+        # Add parameter passing tests
+        history_param_suite = unittest.TestLoader().loadTestsFromTestCase(TestMT5HistoryParameterPassing)
+        suite.addTest(history_param_suite)
+    else:
+        # Use integration tests with real connection
+        print("Using real MT5 connection for history tests...")
+        history_suite = unittest.TestLoader().loadTestsFromTestCase(TestMT5HistoryIntegration)
+        suite.addTest(history_suite)
+        
+        # Add no connection test
+        no_connection_suite = unittest.TestLoader().loadTestsFromTestCase(TestMT5HistoryNoConnection)
+        suite.addTest(no_connection_suite)
+        
+        # Add parameter passing tests
+        history_param_suite = unittest.TestLoader().loadTestsFromTestCase(TestMT5HistoryParameterPassing)
+        suite.addTest(history_param_suite)
+    
+    # Run the suite
+    start_time = time.time()
+    result = unittest.TextTestRunner(verbosity=verbosity).run(suite)
+    duration = time.time() - start_time
+    
+    print(f"\n✨ History tests completed in {duration:.2f} seconds")
+    return result
+
+
 def run_long_tests(verbosity=2):
     """
     Run long-running tests that take more time.
@@ -202,6 +263,10 @@ def run_simple_tests():
         print("\n=== Account Tests ===")
         # Run simple account test
         simple_account_test()
+        
+        print("\n=== History Tests ===")
+        # Run simple history test
+        simple_history_test()
     
     print("\n✨ Simple tests completed")
     return True
@@ -237,6 +302,7 @@ if __name__ == "__main__":
         mixed:       Run both unit and integration tests (default)
         account:     Run only account tests (mocked or real based on settings)
         connection:  Run only connection tests (requires real MT5)
+        history:     Run only history tests (mocked or real based on settings)
         simple:      Run simple tests without unittest framework
         long:        Run long-running tests
         all:         Run all tests (unit, integration, simple, and long)
@@ -258,6 +324,7 @@ if __name__ == "__main__":
             print("  mixed:       Run both unit and integration tests (default)")
             print("  account:     Run only account tests (mocked or real based on settings)")
             print("  connection:  Run only connection tests (requires real MT5)")
+            print("  history:     Run only history tests (mocked or real based on settings)")
             print("  simple:      Run simple tests without unittest framework")
             print("  long:        Run long-running tests")
             print("  all:         Run all tests (unit, integration, simple, and long)")
@@ -289,6 +356,8 @@ if __name__ == "__main__":
             success = False
         else:
             success = run_connection_tests(VERBOSITY).wasSuccessful()
+    elif mode == "history":
+        success = run_history_tests(VERBOSITY).wasSuccessful()
     elif mode == "simple":
         success = run_simple_tests()
     elif mode == "long":
