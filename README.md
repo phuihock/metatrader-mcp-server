@@ -27,7 +27,7 @@ This is a Model Context Protocol (MCP) server built with Python to enable AI LLM
 | Task | Status | Done | Tested |
 |------|--------|------|--------|
 | Connect to MetaTrader 5 terminal | Finished | ✅ | ✅ |
-| Develop MetaTrader client module | On progress | - | - |
+| Develop MetaTrader client module | On progress (2/7) | - | - |
 | Develop MCP Server module | - | - | - |
 | Implement MCP tools | - | - | - |
 | Windsurf integration | - | - | - |
