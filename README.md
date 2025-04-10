@@ -1,5 +1,7 @@
 # MetaTrader MCP Server
 
+This is a Model Context Protocol (MCP) server built with Python to enable AI LLMs to trade using MetaTrader platform.
+
 ## Road to v1
 
 ### MCP Tools List
