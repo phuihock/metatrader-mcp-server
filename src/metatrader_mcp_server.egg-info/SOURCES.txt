@@ -1,9 +1,0 @@
-LICENSE
-README.md
-pyproject.toml
-src/MetaTraderMCPServer/__init__.py
-src/MetaTraderMCPServer/greetings.py
-src/metatrader_mcp_server.egg-info/PKG-INFO
-src/metatrader_mcp_server.egg-info/SOURCES.txt
-src/metatrader_mcp_server.egg-info/dependency_links.txt
-src/metatrader_mcp_server.egg-info/top_level.txt
