@@ -14,6 +14,17 @@ import threading
 # Add src directory to path to import the client package
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 
+# Add tests directory to path to handle running the file directly
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+
+# Import test configuration (try both ways to handle direct or indirect running)
+try:
+    # First try relative import (when run through run_tests.py)
+    from tests.config import MT5_CONFIG, TEST_MODE, USE_MOCKS, DEMO_ACCOUNT, VERBOSITY
+except ModuleNotFoundError:
+    # Fall back to direct import (when run directly)
+    from config import MT5_CONFIG, TEST_MODE, USE_MOCKS, DEMO_ACCOUNT, VERBOSITY
+
 from MetaTraderMCPServer.client.connection import MT5Connection
 from MetaTraderMCPServer.client.exceptions import ConnectionError, InitializationError, LoginError
 
@@ -385,18 +396,26 @@ def simple_connection_test():
 
 if __name__ == "__main__":
     """Run connection tests."""
-    mode = "simple"  # Options: "unittest", "simple", "extended", "all"
+    mode = "simple"  # Default: run simple test
     
-    if mode == "unittest":
-        unittest.main()
-    elif mode == "simple":
+    if len(sys.argv) > 1:
+        mode = sys.argv[1]  # Get mode from command line
+        
+    runner = unittest.TextTestRunner(verbosity=VERBOSITY)
+    
+    if mode == "unittest" or mode == "all":
+        # Run unit tests
+        print("\n🧪 Running unit tests for MT5Connection...")
+        conn_suite = unittest.TestLoader().loadTestsFromTestCase(TestMT5Connection)
+        runner.run(conn_suite)
+    
+    if mode == "extended" or mode == "all":
+        # Run extended tests
+        print("\n⏱️ Running extended connection tests...")
+        ext_suite = unittest.TestLoader().loadTestsFromTestCase(TestMT5ConnectionLongRunning)
+        runner.run(ext_suite)
+    
+    if mode == "simple" or mode == "all":
+        # Run simple test
+        print("\n🔄 Running simple connection test...")
         simple_connection_test()
-    elif mode == "extended":
-        suite = unittest.TestSuite()
-        suite.addTest(TestMT5ConnectionLongRunning('test_extended_connection'))
-        unittest.TextTestRunner().run(suite)
-    elif mode == "all":
-        # Run all tests including edge cases and stress tests
-        unittest.main()
-    else:
-        print(f"Unknown mode: {mode}. Use 'simple', 'unittest', 'extended', or 'all'.")

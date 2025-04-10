@@ -15,7 +15,7 @@ The project is organized into two main modules:
 The client module handles all communication with the MetaTrader 5 terminal:
 
 - [**Connection**](client/connection.md) - Establish and manage connections to the MetaTrader 5 terminal
-- **Account** (Coming Soon) - Access account information and trading status
+- [**Account**](client/account.md) - Access account information and trading status
 - **Market** (Coming Soon) - Retrieve market data and symbol information
 - **Orders** (Coming Soon) - Execute trades and manage orders
 - **History** (Coming Soon) - Access historical trade data and statistics

@@ -46,6 +46,21 @@ class AccountError(MT5ClientError):
     pass
 
 
+class AccountInfoError(AccountError):
+    """Exception raised when account information cannot be retrieved."""
+    pass
+
+
+class TradingNotAllowedError(AccountError):
+    """Exception raised when trading is not allowed on the account."""
+    pass
+
+
+class MarginLevelError(AccountError):
+    """Exception raised when margin level is too low for operations."""
+    pass
+
+
 class MarketError(MT5ClientError):
     """Exception raised for market data-related errors."""
     pass
