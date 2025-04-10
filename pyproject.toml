@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "metatrader-mcp-server"
+version = "0.0.1"
+authors = [
+  { name="Aria Dhanang", email="ariadng@gmail.com" },
+]
+description = "Model Context Protocol (MCP) to enable AI LLMs to trade using MetaTrader platform"
+readme = "README.md"
+requires-python = ">=3.13"
+license = { file="LICENSE" }
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = []
+
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.urls]
+"Homepage" = "https://github.com/ariadng/metatrader-mcp-server"
+"Bug Tracker" = "https://github.com/ariadng/metatrader-mcp-server/issues"
