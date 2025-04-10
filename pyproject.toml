@@ -21,8 +21,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-dependencies = []
-
+dependencies = ["MetaTrader5>=5.0.45"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
