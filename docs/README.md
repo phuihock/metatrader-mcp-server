@@ -18,7 +18,7 @@ The client module handles all communication with the MetaTrader 5 terminal:
 - [**Account**](client/account.md) - Access account information and trading status
 - **Market** (Coming Soon) - Retrieve market data and symbol information
 - **Orders** (Coming Soon) - Execute trades and manage orders
-- **History** (Coming Soon) - Access historical trade data and statistics
+- [**History**](client/history.md) - Access historical trade data and statistics
 
 ### Server Module 🌐
 
