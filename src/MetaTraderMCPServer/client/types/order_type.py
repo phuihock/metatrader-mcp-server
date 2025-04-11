@@ -4,6 +4,7 @@ MetaTrader 5 order type definitions.
 This module contains order type definitions and mappings for MetaTrader 5 constants.
 """
 from enum import Enum
+from typing import Any, Optional
 
 
 class OrderType(Enum):
@@ -15,12 +16,15 @@ class OrderType(Enum):
     - Get string representation via OrderType.to_string(0) ("BUY")
     - Get numeric value via OrderType.to_code("BUY") (0)
     - Check if a code or name exists via OrderType.exists("BUY") or OrderType.exists(0)
+    - Use in logical comparisons: if order_type == OrderType.BUY or if order_type == "BUY" or if order_type == 0
     
     Examples:
         OrderType.BUY.value == 0
         OrderType.to_string(0) == "BUY"
         OrderType.to_code("BUY") == 0
         OrderType["BUY"].value == 0
+        OrderType.BUY == "BUY"  # True
+        OrderType.BUY == 0      # True
     """
     BUY = 0
     SELL = 1
@@ -31,6 +35,34 @@ class OrderType(Enum):
     BUY_STOP_LIMIT = 6
     SELL_STOP_LIMIT = 7
     CLOSE_BY = 8
+    
+    def __eq__(self, other):
+        """
+        Enable equality comparison with integers, strings, and other OrderType instances.
+        
+        Args:
+            other: Value to compare with (int, str, or OrderType)
+            
+        Returns:
+            bool: True if values are equal
+        """
+        if isinstance(other, int):
+            return self.value == other
+        elif isinstance(other, str):
+            try:
+                return self.name == other.upper()
+            except (AttributeError, TypeError):
+                return False
+        return super().__eq__(other)
+    
+    def __hash__(self):
+        """
+        Maintain hashability for use in dictionaries and sets.
+        
+        Returns:
+            int: Hash value
+        """
+        return hash(self.name)
     
     @classmethod
     def to_string(cls, code, default=None):
@@ -86,3 +118,20 @@ class OrderType(Enum):
             except KeyError:
                 return False
         return False
+
+    @classmethod
+    def validate(cls, input):
+        """
+        Validate order type.
+        
+        Args:
+            input: Order type code (int) or name (str)
+            
+        Returns:
+            int: Numeric code for order type or None
+        """
+        if isinstance(input, str):
+            return cls.to_code(input)
+        elif isinstance(input, cls):
+            return input.value
+        return None

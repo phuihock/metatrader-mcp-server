@@ -4,6 +4,7 @@ MetaTrader 5 trade request action definitions.
 This module contains trade request action type definitions for MetaTrader 5.
 """
 from enum import Enum
+from typing import Any
 
 
 class TradeRequestActions(Enum):
@@ -15,6 +16,7 @@ class TradeRequestActions(Enum):
     - Get string representation via TradeRequestActions.to_string(1) ("DEAL")
     - Get numeric value via TradeRequestActions.to_code("DEAL") (1)
     - Check if a code or name exists via TradeRequestActions.exists("DEAL") or TradeRequestActions.exists(1)
+    - Use in logical comparisons: if action == TradeRequestActions.DEAL or if action == "DEAL" or if action == 1
     
     Types:
         DEAL (1): Place an order for an instant deal (market order)
@@ -30,6 +32,34 @@ class TradeRequestActions(Enum):
     MODIFY = 7
     REMOVE = 8
     CLOSE_BY = 10
+    
+    def __eq__(self, other):
+        """
+        Enable equality comparison with integers, strings, and other TradeRequestActions instances.
+        
+        Args:
+            other: Value to compare with (int, str, or TradeRequestActions)
+            
+        Returns:
+            bool: True if values are equal
+        """
+        if isinstance(other, int):
+            return self.value == other
+        elif isinstance(other, str):
+            try:
+                return self.name == other.upper()
+            except (AttributeError, TypeError):
+                return False
+        return super().__eq__(other)
+    
+    def __hash__(self):
+        """
+        Maintain hashability for use in dictionaries and sets.
+        
+        Returns:
+            int: Hash value
+        """
+        return hash(self.name)
     
     @classmethod
     def to_string(cls, code, default=None):
@@ -85,3 +115,20 @@ class TradeRequestActions(Enum):
             except KeyError:
                 return False
         return False
+
+    @classmethod
+    def validate(cls, input):
+        """
+        Validate trade request action type.
+        
+        Args:
+            input: Action code (int) or name (str)
+            
+        Returns:
+            int: Numeric code for action or None
+        """
+        if isinstance(input, str):
+            return cls.to_code(input)
+        elif isinstance(input, cls):
+            return input.value
+        return None
