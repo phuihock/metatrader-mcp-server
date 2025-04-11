@@ -54,22 +54,22 @@ def calculate_margin(
         >>> calculate_margin("SELL", "USDJPY", 0.1, 107.50)
         43.28
     """
-    # Convert order_type to int if it's an Enum instance
-    if isinstance(order_type, OrderType):
-        mt5_order_type = _MT5_ORDER_TYPE_MAP[order_type.value]
-    # Handle string order type (e.g., "BUY", "SELL")
-    elif isinstance(order_type, str):
-        order_code = OrderType.to_code(order_type)
-        if order_code is None:
+    # Convert order_type to the appropriate code value
+    if isinstance(order_type, str):
+        type_code = OrderType.to_code(order_type)
+        if type_code is None:
             raise ValueError(f"Invalid order type string: {order_type}")
-        mt5_order_type = _MT5_ORDER_TYPE_MAP[order_code]
-    # Handle integer order type
-    elif isinstance(order_type, int):
-        if not OrderType.exists(order_type):
-            raise ValueError(f"Invalid order type code: {order_type}")
-        mt5_order_type = _MT5_ORDER_TYPE_MAP[order_type]
+    elif isinstance(order_type, OrderType):
+        type_code = order_type.value
     else:
-        raise TypeError(f"order_type must be OrderType, str, or int, got {type(order_type)}")
+        type_code = order_type
+        if not OrderType.exists(type_code):
+            raise ValueError(f"Invalid order type code: {type_code}")
+    
+    # Get the corresponding MT5 order type
+    mt5_order_type = _MT5_ORDER_TYPE_MAP.get(type_code)
+    if mt5_order_type is None:
+        raise ValueError(f"Unsupported order type: {OrderType.to_string(type_code)}")
     
     # Make sure the symbol is selected in Market Watch
     symbol_info = mt5.symbol_info(symbol)
