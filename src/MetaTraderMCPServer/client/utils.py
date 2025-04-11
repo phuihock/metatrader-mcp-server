@@ -136,3 +136,195 @@ def enhance_dataframe_order_types(
     )
     
     return result
+
+
+def enhance_dataframe_order_states(
+    df: pd.DataFrame,
+    state_column: str = 'state',
+    preserve_original: bool = True,
+    original_column: str = 'state_code'
+) -> pd.DataFrame:
+    """
+    Enhance a DataFrame by converting numeric order state codes to human-readable strings.
+    
+    Args:
+        df: DataFrame containing order state codes
+        state_column: Name of the column containing order state codes
+        preserve_original: Whether to preserve the original numeric codes
+        original_column: Name of the column to store original numeric codes if preserved
+        
+    Returns:
+        pd.DataFrame: Enhanced DataFrame with human-readable order states
+    """
+    from .types import OrderState
+    
+    # Return original DataFrame if it's empty or doesn't have the state column
+    if df.empty or state_column not in df.columns:
+        return df
+    
+    # Create a copy to avoid modifying the original DataFrame
+    result = df.copy()
+    
+    # Store original values if requested
+    if preserve_original:
+        result[original_column] = result[state_column]
+    
+    # Convert numeric codes to human-readable strings using our enhanced OrderState Enum
+    result[state_column] = result[state_column].map(
+        lambda x: OrderState.to_string(x) if pd.notna(x) else x
+    )
+    
+    return result
+
+
+def enhance_dataframe_order_filling(
+    df: pd.DataFrame,
+    filling_column: str = 'type_filling',
+    preserve_original: bool = True,
+    original_column: str = 'filling_code'
+) -> pd.DataFrame:
+    """
+    Enhance a DataFrame by converting numeric order filling codes to human-readable strings.
+    
+    Args:
+        df: DataFrame containing order filling codes
+        filling_column: Name of the column containing order filling codes
+        preserve_original: Whether to preserve the original numeric codes
+        original_column: Name of the column to store original numeric codes if preserved
+        
+    Returns:
+        pd.DataFrame: Enhanced DataFrame with human-readable order filling types
+    """
+    from .types import OrderFilling
+    
+    # Return original DataFrame if it's empty or doesn't have the filling column
+    if df.empty or filling_column not in df.columns:
+        return df
+    
+    # Create a copy to avoid modifying the original DataFrame
+    result = df.copy()
+    
+    # Store original values if requested
+    if preserve_original:
+        result[original_column] = result[filling_column]
+    
+    # Convert numeric codes to human-readable strings using our enhanced OrderFilling Enum
+    result[filling_column] = result[filling_column].map(
+        lambda x: OrderFilling.to_string(x) if pd.notna(x) else x
+    )
+    
+    return result
+
+
+def enhance_dataframe_order_lifetime(
+    df: pd.DataFrame,
+    lifetime_column: str = 'type_time',
+    preserve_original: bool = True,
+    original_column: str = 'lifetime_code'
+) -> pd.DataFrame:
+    """
+    Enhance a DataFrame by converting numeric order lifetime codes to human-readable strings.
+    
+    Args:
+        df: DataFrame containing order lifetime codes
+        lifetime_column: Name of the column containing order lifetime codes
+        preserve_original: Whether to preserve the original numeric codes
+        original_column: Name of the column to store original numeric codes if preserved
+        
+    Returns:
+        pd.DataFrame: Enhanced DataFrame with human-readable order lifetime types
+    """
+    from .types import OrderTime
+    
+    # Return original DataFrame if it's empty or doesn't have the lifetime column
+    if df.empty or lifetime_column not in df.columns:
+        return df
+    
+    # Create a copy to avoid modifying the original DataFrame
+    result = df.copy()
+    
+    # Store original values if requested
+    if preserve_original:
+        result[original_column] = result[lifetime_column]
+    
+    # Convert numeric codes to human-readable strings using our enhanced OrderTime Enum
+    result[lifetime_column] = result[lifetime_column].map(
+        lambda x: OrderTime.to_string(x) if pd.notna(x) else x
+    )
+    
+    return result
+
+
+def convert_orders_to_dataframe(
+    orders: Any,
+    columns_mapping: Optional[Dict[str, str]] = None,
+    sort_by: Optional[str] = "time_setup",
+    ascending: bool = False,
+    enhance_order_types: bool = True,
+    enhance_order_states: bool = True,
+    enhance_order_filling: bool = True,
+    enhance_order_lifetime: bool = True
+) -> pd.DataFrame:
+    """
+    Convert MetaTrader5 pending orders to a pandas DataFrame with selected fields.
+    
+    Args:
+        orders: MetaTrader5 orders (tuple of named tuples)
+        columns_mapping: Dictionary mapping original column names to new names
+                        Default mapping handles common order fields
+        sort_by: Column name to sort by (after renaming)
+        ascending: Sort order (True for ascending, False for descending)
+        enhance_order_types: Whether to convert numeric order types to human-readable strings
+        enhance_order_states: Whether to convert numeric order states to human-readable strings
+        enhance_order_filling: Whether to convert numeric order filling types to human-readable strings
+        enhance_order_lifetime: Whether to convert numeric order lifetime types to human-readable strings
+        
+    Returns:
+        pd.DataFrame: DataFrame with selected and renamed columns
+    """
+    # Return empty DataFrame if orders is None or empty
+    if orders is None or len(orders) == 0:
+        # Create empty DataFrame with expected columns
+        default_columns = ['id', 'time', 'symbol', 'type', 'volume', 
+                          'open', 'stop_loss', 'take_profit', 'state', 'type_time', 'expiration']
+        return pd.DataFrame(columns=default_columns)
+    
+    # Default columns mapping if not provided
+    if columns_mapping is None:
+        columns_mapping = {
+            'ticket': 'id',
+            'time_setup': 'time',
+            'symbol': 'symbol',
+            'type': 'type',
+            'volume_current': 'volume',
+            'price_open': 'open',
+            'sl': 'stop_loss',
+            'tp': 'take_profit',
+            'state': 'state',
+            'type_time': 'type_time',
+            'type_filling': 'type_filling',
+            'time_expiration': 'expiration'
+        }
+    
+    # Use the existing conversion function with the specific mapping
+    result = convert_positions_to_dataframe(
+        orders,
+        columns_mapping=columns_mapping,
+        sort_by=sort_by,
+        ascending=ascending,
+        enhance_order_types=enhance_order_types
+    )
+    
+    # Additionally enhance order states if requested
+    if enhance_order_states and not result.empty and 'state' in result.columns:
+        result = enhance_dataframe_order_states(result)
+    
+    # Additionally enhance order filling types if requested
+    if enhance_order_filling and not result.empty and 'type_filling' in result.columns:
+        result = enhance_dataframe_order_filling(result)
+    
+    # Additionally enhance order lifetime types if requested
+    if enhance_order_lifetime and not result.empty and 'type_time' in result.columns:
+        result = enhance_dataframe_order_lifetime(result)
+    
+    return result

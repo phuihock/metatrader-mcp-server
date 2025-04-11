@@ -168,21 +168,88 @@ class OrderType(Enum):
 
 class OrderFilling(Enum):
     """
-    Order filling types supported by MetaTrader 5.
+    Enhanced OrderFilling enumeration with bi-directional mapping capabilities.
+    
+    This combines the benefits of Python's Enum with dictionary-like lookups:
+    - Access numeric values via OrderFilling.FOK, OrderFilling.IOC, etc. (Enum style)
+    - Get string representation via OrderFilling.to_string(0) ("FOK")
+    - Get numeric value via OrderFilling.to_code("FOK") (0)
+    - Check if a code or name exists via OrderFilling.exists("FOK") or OrderFilling.exists(0)
     
     Types:
         FOK (0): Fill or Kill - order must be filled completely or canceled
         IOC (1): Immediate or Cancel - fill as much as possible and cancel the rest
         RETURN (2): Return execution - return the remaining volume
     """
-    FOK = 0  # Fill or Kill
-    IOC = 1  # Immediate or Cancel
-    RETURN = 2  # Return execution
+    FOK = 0       # Fill or Kill
+    IOC = 1       # Immediate or Cancel
+    RETURN = 2    # Return execution
+    
+    @classmethod
+    def to_string(cls, code, default=None):
+        """
+        Convert numeric order filling code to string representation.
+        
+        Args:
+            code: Numeric order filling code
+            default: Value to return if code is not found
+            
+        Returns:
+            str: String representation of order filling or default value
+        """
+        for filling in cls:
+            if filling.value == code:
+                return filling.name
+        return default or f"UNKNOWN_{code}"
+    
+    @classmethod
+    def to_code(cls, name, default=None):
+        """
+        Convert string order filling name to numeric code.
+        
+        Args:
+            name: String representation of order filling
+            default: Value to return if name is not found
+            
+        Returns:
+            int: Numeric code for order filling or default value
+        """
+        try:
+            return cls[name.upper()].value
+        except (KeyError, AttributeError):
+            return default
+    
+    @classmethod
+    def exists(cls, key):
+        """
+        Check if an order filling code or name exists.
+        
+        Args:
+            key: Order filling code (int) or name (str)
+            
+        Returns:
+            bool: True if the order filling exists
+        """
+        if isinstance(key, int):
+            return any(filling.value == key for filling in cls)
+        elif isinstance(key, str):
+            try:
+                cls[key.upper()]
+                return True
+            except KeyError:
+                return False
+        return False
 
 
 class OrderTime(Enum):
     """
-    Order lifetime types supported by MetaTrader 5.
+    Enhanced OrderTime enumeration with bi-directional mapping capabilities.
+    
+    This combines the benefits of Python's Enum with dictionary-like lookups:
+    - Access numeric values via OrderTime.GTC, OrderTime.DAY, etc. (Enum style)
+    - Get string representation via OrderTime.to_string(0) ("GTC")
+    - Get numeric value via OrderTime.to_code("GTC") (0)
+    - Check if a code or name exists via OrderTime.exists("GTC") or OrderTime.exists(0)
     
     Types:
         GTC (0): Good Till Cancelled - order remains active until explicitly canceled
@@ -190,10 +257,65 @@ class OrderTime(Enum):
         SPECIFIED (2): Valid until specified date and time
         SPECIFIED_DAY (3): Valid until 23:59:59 of specified day
     """
-    GTC = 0  # Good Till Cancelled
-    DAY = 1  # Day Order
-    SPECIFIED = 2  # Valid until specified date
+    GTC = 0            # Good Till Cancelled
+    DAY = 1            # Day Order
+    SPECIFIED = 2      # Valid until specified date
     SPECIFIED_DAY = 3  # Valid until 23:59:59 of specified day
+    
+    @classmethod
+    def to_string(cls, code, default=None):
+        """
+        Convert numeric order lifetime code to string representation.
+        
+        Args:
+            code: Numeric order lifetime code
+            default: Value to return if code is not found
+            
+        Returns:
+            str: String representation of order lifetime or default value
+        """
+        for time_type in cls:
+            if time_type.value == code:
+                return time_type.name
+        return default or f"UNKNOWN_{code}"
+    
+    @classmethod
+    def to_code(cls, name, default=None):
+        """
+        Convert string order lifetime name to numeric code.
+        
+        Args:
+            name: String representation of order lifetime
+            default: Value to return if name is not found
+            
+        Returns:
+            int: Numeric code for order lifetime or default value
+        """
+        try:
+            return cls[name.upper()].value
+        except (KeyError, AttributeError):
+            return default
+    
+    @classmethod
+    def exists(cls, key):
+        """
+        Check if an order lifetime code or name exists.
+        
+        Args:
+            key: Order lifetime code (int) or name (str)
+            
+        Returns:
+            bool: True if the order lifetime exists
+        """
+        if isinstance(key, int):
+            return any(time_type.value == key for time_type in cls)
+        elif isinstance(key, str):
+            try:
+                cls[key.upper()]
+                return True
+            except KeyError:
+                return False
+        return False
 
 
 class TradeAction(Enum):
@@ -214,3 +336,90 @@ class TradeAction(Enum):
     MODIFY = 7  # Modify order
     REMOVE = 8  # Delete order
     CLOSE_BY = 10  # Close position by opposite one
+
+
+# ========================================================================================
+# Order State Definitions
+# ========================================================================================
+
+class OrderState(Enum):
+    """
+    Enhanced OrderState enumeration with bi-directional mapping capabilities.
+    
+    This combines the benefits of Python's Enum with dictionary-like lookups:
+    - Access numeric values via OrderState.STARTED, OrderState.PLACED, etc. (Enum style)
+    - Get string representation via OrderState.to_string(0) ("STARTED")
+    - Get numeric value via OrderState.to_code("STARTED") (0)
+    - Check if a code or name exists via OrderState.exists("STARTED") or OrderState.exists(0)
+    
+    Examples:
+        OrderState.STARTED.value == 0
+        OrderState.to_string(0) == "STARTED"
+        OrderState.to_code("STARTED") == 0
+        OrderState["STARTED"].value == 0
+    """
+    STARTED = 0         # Order checked, but not yet accepted by broker
+    PLACED = 1          # Order accepted
+    CANCELED = 2        # Order canceled by client
+    PARTIAL = 3         # Order partially executed
+    FILLED = 4          # Order fully executed
+    REJECTED = 5        # Order rejected
+    EXPIRED = 6         # Order expired
+    REQUEST_ADD = 7     # Order being registered (placing)
+    REQUEST_MODIFY = 8  # Order being modified (modifying)
+    REQUEST_CANCEL = 9  # Order being deleted (deleting)
+    
+    @classmethod
+    def to_string(cls, code, default=None):
+        """
+        Convert numeric order state code to string representation.
+        
+        Args:
+            code: Numeric order state code
+            default: Value to return if code is not found
+            
+        Returns:
+            str: String representation of order state or default value
+        """
+        for order_state in cls:
+            if order_state.value == code:
+                return order_state.name
+        return default or f"UNKNOWN_{code}"
+    
+    @classmethod
+    def to_code(cls, name, default=None):
+        """
+        Convert string order state name to numeric code.
+        
+        Args:
+            name: String representation of order state
+            default: Value to return if name is not found
+            
+        Returns:
+            int: Numeric code for order state or default value
+        """
+        try:
+            return cls[name.upper()].value
+        except (KeyError, AttributeError):
+            return default
+    
+    @classmethod
+    def exists(cls, key):
+        """
+        Check if an order state code or name exists.
+        
+        Args:
+            key: Order state code (int) or name (str)
+            
+        Returns:
+            bool: True if the order state exists
+        """
+        if isinstance(key, int):
+            return any(order_state.value == key for order_state in cls)
+        elif isinstance(key, str):
+            try:
+                cls[key.upper()]
+                return True
+            except KeyError:
+                return False
+        return False

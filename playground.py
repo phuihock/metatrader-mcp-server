@@ -37,12 +37,26 @@ def main():
   
     # gold = client.market.get_candles_by_date("XAUUSD", "D1", "2025-04-10 00:00", "2025-01-10 23:59")
     # print(gold)
-  
-    orders = client.orders._getPositions(ticket="1650804616")
+
+    print("\n\n")
+
+    print("==============")
+    print("OPEN POSITIONS")
+    print("==============\n")
+    orders = client.orders._get_positions()
     print(tabulate(orders, headers='keys', tablefmt='fancy_grid'))
 
+    print("\n")
+
+    print("==============")
+    print("PENDING ORDERS")
+    print("==============\n")
+    orders = client.orders._get_pending_orders(symbol_name="XAUUSD")
+    print(tabulate(orders, headers='keys', tablefmt='fancy_grid'))
+    
+    print("\n\n")
+    
     client.disconnect()
 
 if __name__ == "__main__":
     main()
-
