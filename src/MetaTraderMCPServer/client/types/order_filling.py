@@ -24,6 +24,25 @@ class OrderFilling(Enum):
     FOK = 0       # Fill or Kill
     IOC = 1       # Immediate or Cancel
     RETURN = 2    # Return execution
+
+    def __eq__(self, other):
+        """
+        Enable equality comparison with integers, strings, and other OrderFilling instances.
+        
+        Args:
+            other: Value to compare with (int, str, or OrderFilling)
+            
+        Returns:
+            bool: True if values are equal
+        """
+        if isinstance(other, int):
+            return self.value == other
+        elif isinstance(other, str):
+            try:
+                return self.name == other.upper()
+            except (AttributeError, TypeError):
+                return False
+        return super().__eq__(other)
     
     @classmethod
     def to_string(cls, code, default=None):
@@ -79,3 +98,20 @@ class OrderFilling(Enum):
             except KeyError:
                 return False
         return False
+
+    @classmethod
+    def validate(cls, input):
+        """
+        Validate order filling type.
+        
+        Args:
+            input: Order filling code (int) or name (str)
+            
+        Returns:
+            int: Numeric code for order filling or None
+        """
+        if isinstance(input, str):
+            return cls.to_code(input)
+        elif isinstance(input, cls):
+            return input.value
+        return None

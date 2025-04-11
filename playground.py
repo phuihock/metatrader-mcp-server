@@ -182,23 +182,36 @@ def main():
     print("📈 SEND ORDER TEST")
     print("====================\n")
     
-    # Get current price
-    tick = mt5.symbol_info_tick("XAUUSD")
-    if tick is None:
-        print(f"❌ Failed to get tick data for XAUUSD")
-    else:
-        # Send the order
-        order_result = send_order(
-            connection=client._connection,
-            symbol="XAUUSD",
-            volume=0.1,
-            sl=3250,
-            tp=3100,
-            order_type="SELL",
-            price=tick.ask,
-            action=TradeRequestActions.DEAL
-        )
-        print(order_result)
+    # # Get current price
+    # tick = mt5.symbol_info_tick("XAUUSD")
+    
+    # if tick is None:
+    #     print(f"❌ Failed to get tick data for XAUUSD")
+    # else:
+    #     # Send the order
+    #     order_result = send_order(
+    #         connection=client._connection,
+    #         symbol="XAUUSD",
+    #         volume=0.1,
+    #         sl=3250,
+    #         tp=3100,
+    #         order_type="SELL",
+    #         price=tick.ask,
+    #         action=TradeRequestActions.DEAL
+    #     )
+    #     print(order_result)
+
+    order_result = send_order(
+        connection=client._connection,
+        symbol="XAUUSD",
+        volume=0.1,
+        stop_loss=3500,
+        take_profit=4500,
+        order_type="SELL_LIMIT",
+        price=4000,
+        action=TradeRequestActions.PENDING
+    )
+    print(order_result)
 
     client.disconnect()
 
