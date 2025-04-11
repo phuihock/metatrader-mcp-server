@@ -9,10 +9,9 @@ from datetime import datetime
 from .connection import MT5Connection
 from .account import MT5Account
 from .market import MT5Market
-from .orders import MT5Orders, OrderType, OrderFilling, OrderTime, TradeAction
-from .history import MT5History, DealType, OrderState
-from .exceptions import MT5ClientError
-
+from .orders import MT5Orders
+from .history import MT5History
+from .types import OrderType
 
 class MT5Client:
     """
@@ -35,7 +34,7 @@ class MT5Client:
         self._connection = MT5Connection(config)
         self._account = MT5Account(self._connection)
         self.market = MT5Market(self._connection)
-        self._orders = MT5Orders(self._connection)
+        self.orders = MT5Orders(self._connection)
         self._history = MT5History(self._connection)
     
     # Connection methods

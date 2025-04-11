@@ -13,7 +13,6 @@ from .exceptions import (
     AccountError,
     HistoryError
 )
-from .orders import OrderType, OrderFilling, OrderTime
 
 __all__ = [
     "MT5Client",
@@ -23,7 +22,4 @@ __all__ = [
     "MarketError",
     "AccountError",
     "HistoryError",
-    "OrderType",
-    "OrderFilling",
-    "OrderTime"
 ]
