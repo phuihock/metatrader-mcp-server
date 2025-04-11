@@ -40,19 +40,49 @@ def main():
 
     print("\n\n")
 
-    print("==============")
-    print("OPEN POSITIONS")
-    print("==============\n")
-    orders = client.orders._get_positions()
-    print(tabulate(orders, headers='keys', tablefmt='fancy_grid'))
+    # Get all pending orders
+    all_orders = client.orders.get_all_pending_orders()
+    print(tabulate(all_orders, headers='keys', tablefmt='fancy_grid'))
 
-    print("\n")
+    # Get pending orders for a specific symbol
+    xauusd_orders = client.orders.get_pending_orders_by_symbol("XAUUSD")
+    print(tabulate(xauusd_orders, headers='keys', tablefmt='fancy_grid'))
 
-    print("==============")
-    print("PENDING ORDERS")
-    print("==============\n")
-    orders = client.orders._get_pending_orders(symbol_name="XAUUSD")
-    print(tabulate(orders, headers='keys', tablefmt='fancy_grid'))
+    # Get pending orders for a specific currency
+    usd_orders = client.orders.get_pending_orders_by_currency("USD")
+    print(tabulate(usd_orders, headers='keys', tablefmt='fancy_grid'))
+
+    # Get a specific pending order by ID
+    order = client.orders.get_pending_orders_by_id(1642078070)
+    print(tabulate(order, headers='keys', tablefmt='fancy_grid'))
+
+    # all_positions = client.orders.get_all_positions()
+    # print(tabulate(all_positions, headers='keys', tablefmt='fancy_grid'))
+
+    # print("\n\n")
+
+    # xauusd_positions = client.orders.get_positions_by_symbol("XAUUSD")
+    # print(tabulate(xauusd_positions, headers='keys', tablefmt='fancy_grid'))
+
+    # print("\n\n")
+
+    # position = client.orders.get_position_by_id(1651409559)
+    # print(tabulate(position, headers='keys', tablefmt='fancy_grid'))
+
+    # print("==============")
+    # print("OPEN POSITIONS")
+    # print("==============\n")
+    # orders = client.orders.get_positions()
+    # print(tabulate(orders, headers='keys', tablefmt='fancy_grid'))
+
+    # print("\n")
+
+    # print("==============")
+    # print("PENDING ORDERS")
+    # print("==============\n")
+    # orders = client.orders.get_pending_orders(symbol_name="XAUUSD")
+    # print(tabulate(orders, headers='keys', tablefmt='fancy_grid'))
+    
     
     print("\n\n")
     

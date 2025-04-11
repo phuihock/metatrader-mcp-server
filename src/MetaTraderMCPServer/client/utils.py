@@ -326,5 +326,10 @@ def convert_orders_to_dataframe(
     # Additionally enhance order lifetime types if requested
     if enhance_order_lifetime and not result.empty and 'type_time' in result.columns:
         result = enhance_dataframe_order_lifetime(result)
+
+    # Remove unnecessary fields
+    for field in ['type_code', 'state_code', 'filling_code', 'lifetime_code']:
+        if field in result.columns:
+            result.drop(columns=[field], inplace=True)
     
     return result

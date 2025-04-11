@@ -4,13 +4,11 @@ MetaTrader 5 order operations module.
 This module handles trade execution, modification, and management.
 """
 
-import MetaTrader5 as mt5
 import pandas as pd
 from typing import Optional, Union
 
-from .market import MT5Market
-from .utils import convert_positions_to_dataframe, convert_orders_to_dataframe
-from .types import OrderType, OrderState, OrderFilling, OrderTime
+from .functions.get_positions import get_positions
+from .functions.get_pending_orders import get_pending_orders
 
 
 class MT5Orders:
@@ -35,198 +33,154 @@ class MT5Orders:
     
 
     # ===================================================================================
-    # Get open trade positions
+    # Get all open positions
     # -----------------------------------------------------------------------------------
     # Done
-    # -----------------------------------------------------------------------------------
-    # Argument rules:
-    # - All arguments are optionals.
-    # - If "ticket" is defined, then "symbol_name" and "group" will be ignored.
-    # - If "symbol_name" is defined, then "group" will be ignored.
-    # -----------------------------------------------------------------------------------
-    # Returns trade positions in Panda's DataFrame, ordered by time (descending).
-    # ===================================================================================
-    def _get_positions(
-        self,
-        ticket: Optional[Union[int, str]] = None,
-        symbol_name: Optional[str] = None,
-        group: Optional[str] = None,
-        order_type: Optional[Union[str, int, OrderType]] = None,
-    ) -> pd.DataFrame:
-
-        market = MT5Market(self._connection)
+    # =================================================================================== 
+    def get_all_positions(self) -> pd.DataFrame:
+        """
+        Get all open positions across all symbols.
         
-        # symbol_name and group validation
-        if (ticket is not None):
-            # Check if symbol_name is valid otherwise return empty DataFrame
-            if symbol_name:
-                symbols = market.get_symbols(symbol_name)
-                if (len(symbols) != 1):
-                    return pd.DataFrame()
-
-            # Check if group is valid otherwise return empty DataFrame
-            if group:
-                symbols = market.get_symbols(group)
-                if (len(symbols) == 0):
-                    return pd.DataFrame()
-
-        # Define result variable as DataFrame.
-        result = pd.DataFrame()
-
-        # Get positions using MetaTrader5 library
-        positions = []
-        if ticket is not None:
-            # Convert ticket to integer if it's a string
-            if isinstance(ticket, str):
-                try:
-                    ticket = int(ticket)
-                except ValueError:
-                    # Return empty DataFrame if ticket cannot be converted to int
-                    return pd.DataFrame()
-            
-            positions = mt5.positions_get(ticket=ticket)
-        elif symbol_name is not None:
-            positions = mt5.positions_get(symbol=symbol_name)
-        elif group is not None:
-            positions = mt5.positions_get(group=group)
-        else:
-            positions = mt5.positions_get()
-
-        # Convert positions to DataFrame with enhanced order types
-        if positions is not None:
-            result = convert_positions_to_dataframe(positions)
-            
-            # Filter by order_type if specified
-            if order_type is not None and not result.empty:
-                if isinstance(order_type, str):
-                    type_code = OrderType.to_code(order_type)
-                elif isinstance(order_type, OrderType):
-                    type_code = order_type.value
-                else:
-                    type_code = order_type
-                
-                if 'type_code' in result.columns:
-                    result = result[result['type_code'] == type_code]
-
-        # Return result
-        return result
+        Returns:
+            pd.DataFrame: All open positions in a pandas DataFrame, ordered by time (descending).
+        """
+        return get_positions(self._connection)
 
 
     # ===================================================================================
-    # Get pending orders
+    # Get open positions by symbol
     # -----------------------------------------------------------------------------------
     # Done
-    # -----------------------------------------------------------------------------------
-    # Argument rules:
-    # - All arguments are optionals.
-    # - If "ticket" is defined, then "symbol_name" and "group" will be ignored.
-    # - If "symbol_name" is defined, then "group" will be ignored.
-    # -----------------------------------------------------------------------------------
-    # Returns pending orders in Panda's DataFrame, ordered by time (descending).
-    # ===================================================================================
-    def _get_pending_orders(
-        self,
-        ticket: Optional[Union[int, str]] = None,
-        symbol_name: Optional[str] = None,
-        group: Optional[str] = None,
-        order_type: Optional[Union[str, int, OrderType]] = None,
-        order_state: Optional[Union[str, int, OrderState]] = None,
-        order_filling: Optional[Union[str, int, OrderFilling]] = None,
-        order_lifetime: Optional[Union[str, int, OrderTime]] = None,
-    ) -> pd.DataFrame:
-        market = MT5Market(self._connection)
+    # =================================================================================== 
+    def get_positions_by_symbol(self, symbol: str) -> pd.DataFrame:
+        """
+        Get all open positions for a specific symbol.
         
-        # symbol_name and group validation
-        if (ticket is not None):
-            # Check if symbol_name is valid otherwise return empty DataFrame
-            if symbol_name:
-                symbols = market.get_symbols(symbol_name)
-                if (len(symbols) != 1):
-                    return pd.DataFrame()
-
-            # Check if group is valid otherwise return empty DataFrame
-            if group:
-                symbols = market.get_symbols(group)
-                if (len(symbols) == 0):
-                    return pd.DataFrame()
-
-        # Define result variable as DataFrame.
-        result = pd.DataFrame()
-
-        # Get pending orders using MetaTrader5 library
-        orders = []
-        if ticket is not None:
-            # Convert ticket to integer if it's a string
-            if isinstance(ticket, str):
-                try:
-                    ticket = int(ticket)
-                except ValueError:
-                    # Return empty DataFrame if ticket cannot be converted to int
-                    return pd.DataFrame()
+        Args:
+            symbol: The symbol name to filter positions by.
             
-            orders = mt5.orders_get(ticket=ticket)
-        elif symbol_name is not None:
-            orders = mt5.orders_get(symbol=symbol_name)
-        elif group is not None:
-            orders = mt5.orders_get(group=group)
-        else:
-            orders = mt5.orders_get()
+        Returns:
+            pd.DataFrame: Open positions for the specified symbol in a pandas DataFrame, 
+                          ordered by time (descending).
+        """
+        return get_positions(self._connection, symbol_name=symbol)
 
-        # Convert orders to DataFrame with enhanced order types
-        if orders is not None:
-            # Use the utility function to convert orders to DataFrame
-            result = convert_orders_to_dataframe(orders)
-            
-            # Filter by order_type if specified
-            if order_type is not None and not result.empty:
-                if isinstance(order_type, str):
-                    type_code = OrderType.to_code(order_type)
-                elif isinstance(order_type, OrderType):
-                    type_code = order_type.value
-                else:
-                    type_code = order_type
-                
-                if 'type_code' in result.columns:
-                    result = result[result['type_code'] == type_code]
-            
-            # Filter by order_state if specified
-            if order_state is not None and not result.empty:
-                if isinstance(order_state, str):
-                    state_code = OrderState.to_code(order_state)
-                elif isinstance(order_state, OrderState):
-                    state_code = order_state.value
-                else:
-                    state_code = order_state
-                
-                if 'state_code' in result.columns:
-                    result = result[result['state_code'] == state_code]
-                    
-            # Filter by order_filling if specified
-            if order_filling is not None and not result.empty:
-                if isinstance(order_filling, str):
-                    filling_code = OrderFilling.to_code(order_filling)
-                elif isinstance(order_filling, OrderFilling):
-                    filling_code = order_filling.value
-                else:
-                    filling_code = order_filling
-                
-                if 'filling_code' in result.columns:
-                    result = result[result['filling_code'] == filling_code]
-                    
-            # Filter by order_lifetime if specified
-            if order_lifetime is not None and not result.empty:
-                if isinstance(order_lifetime, str):
-                    lifetime_code = OrderTime.to_code(order_lifetime)
-                elif isinstance(order_lifetime, OrderTime):
-                    lifetime_code = order_lifetime.value
-                else:
-                    lifetime_code = order_lifetime
-                
-                if 'lifetime_code' in result.columns:
-                    result = result[result['lifetime_code'] == lifetime_code]
 
-        # Return result
-        return result
+    # ===================================================================================
+    # Get open positions by currency
+    # -----------------------------------------------------------------------------------
+    # Done
+    # =================================================================================== 
+    def get_positions_by_currency(self, currency: str) -> pd.DataFrame:
+        """
+        Get all open positions for a specific currency.
+        
+        Args:
+            currency: The currency code to filter positions by (e.g., "USD", "EUR").
+                     Will be formatted as "*currency*" for the group filter.
+            
+        Returns:
+            pd.DataFrame: Open positions for the specified currency in a pandas DataFrame, 
+                          ordered by time (descending).
+        """
+        # Format currency with wildcards for the group filter
+        currency_filter = f"*{currency}*"
+        return get_positions(self._connection, group=currency_filter)
+
+
+    # ===================================================================================
+    # Get open positions by id
+    # -----------------------------------------------------------------------------------
+    # Done
+    # =================================================================================== 
+    def get_positions_by_id(self, id: Union[int, str]) -> pd.DataFrame:
+        """
+        Get a specific open position by its ticket ID.
+        
+        Args:
+            id: The ticket ID of the position to retrieve.
+            
+        Returns:
+            pd.DataFrame: The position with the specified ticket ID in a pandas DataFrame.
+                          Returns an empty DataFrame if no position with the given ID exists.
+        """
+        return get_positions(self._connection, ticket=id)
+
+
+    # ===================================================================================
+    # Get all pending orders
+    # -----------------------------------------------------------------------------------
+    # Done
+    # ===================================================================================
+    def get_all_pending_orders(self) -> pd.DataFrame:
+        """
+        Get all pending orders across all symbols.
+        
+        Returns:
+            pd.DataFrame: All pending orders in a pandas DataFrame, ordered by time (descending).
+        """
+        return get_pending_orders(self._connection)
+
+
+    # ===================================================================================
+    # Get pending orders by symbol
+    # -----------------------------------------------------------------------------------
+    # Done
+    # ===================================================================================
+    def get_pending_orders_by_symbol(self, symbol: str) -> pd.DataFrame:
+        """
+        Get all pending orders for a specific symbol.
+        
+        Args:
+            symbol: The symbol name to filter pending orders by.
+            
+        Returns:
+            pd.DataFrame: Pending orders for the specified symbol in a pandas DataFrame, 
+                          ordered by time (descending).
+        """
+        return get_pending_orders(self._connection, symbol_name=symbol)
+
+
+    # ===================================================================================
+    # Get pending orders by currency
+    # -----------------------------------------------------------------------------------
+    # Done
+    # ===================================================================================
+    def get_pending_orders_by_currency(self, currency: str) -> pd.DataFrame:
+        """
+        Get all pending orders for a specific currency.
+        
+        Args:
+            currency: The currency code to filter pending orders by (e.g., "USD", "EUR").
+                     Will be formatted as "*currency*" for the group filter.
+            
+        Returns:
+            pd.DataFrame: Pending orders for the specified currency in a pandas DataFrame, 
+                          ordered by time (descending).
+        """
+        # Format currency with wildcards for the group filter
+        currency_filter = f"*{currency}*"
+        return get_pending_orders(self._connection, group=currency_filter)
+
+
+    # ===================================================================================
+    # Get pending orders by id
+    # -----------------------------------------------------------------------------------
+    # Done
+    # ===================================================================================
+    def get_pending_orders_by_id(self, id: Union[int, str]) -> pd.DataFrame:
+        """
+        Get a specific pending order by its ticket ID.
+        
+        Args:
+            id: The ticket ID of the pending order to retrieve.
+            
+        Returns:
+            pd.DataFrame: The pending order with the specified ticket ID in a pandas DataFrame.
+                          Returns an empty DataFrame if no pending order with the given ID exists.
+        """
+        return get_pending_orders(self._connection, ticket=id)
+
 
     # def execute_trade(
     #     self, 
@@ -365,38 +319,6 @@ class MT5Orders:
             
     #     Raises:
     #         OrderError: If order deletion fails.
-    #         ConnectionError: If not connected to terminal.
-    #     """
-    #     pass
-    
-    # def get_orders(self, symbol: Optional[str] = None) -> List[Dict[str, Any]]:
-    #     """
-    #     Get list of all active pending orders.
-        
-    #     Args:
-    #         symbol: Filter orders by symbol (optional).
-            
-    #     Returns:
-    #         List[Dict[str, Any]]: List of pending orders.
-            
-    #     Raises:
-    #         OrderError: If orders cannot be retrieved.
-    #         ConnectionError: If not connected to terminal.
-    #     """
-    #     pass
-    
-    # def get_positions(self, symbol: Optional[str] = None) -> List[Dict[str, Any]]:
-    #     """
-    #     Get list of all open positions.
-        
-    #     Args:
-    #         symbol: Filter positions by symbol (optional).
-            
-    #     Returns:
-    #         List[Dict[str, Any]]: List of open positions.
-            
-    #     Raises:
-    #         OrderError: If positions cannot be retrieved.
     #         ConnectionError: If not connected to terminal.
     #     """
     #     pass
