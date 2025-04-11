@@ -18,6 +18,8 @@ import MetaTrader5 as mt5
 import time
 from MetaTraderMCPServer.client.client import MT5Client
 from MetaTraderMCPServer.client.connection import MT5Connection
+from MetaTraderMCPServer.client.functions.calculate_margin import calculate_margin
+from MetaTraderMCPServer.client.types import OrderType
 from tabulate import tabulate
 
 # Restore the original stdout
@@ -85,6 +87,43 @@ def main():
     
     
     print("\n\n")
+    
+    # Test the calculate_margin function
+    print("====================")
+    print("💰 MARGIN CALCULATION")
+    print("====================\n")
+    
+    # Test with different order types and symbols
+    symbols = ["EURUSD", "GBPUSD", "USDJPY", "XAUUSD"]
+    volume = 0.1
+    
+    margin_results = []
+    
+    for symbol in symbols:
+        # Get current price
+        tick = mt5.symbol_info_tick(symbol)
+        if tick is None:
+            print(f"❌ Failed to get tick data for {symbol}")
+            continue
+            
+        # Calculate for BUY order
+        buy_margin = calculate_margin(OrderType.BUY, symbol, volume, tick.ask)
+        
+        # Calculate for SELL order
+        sell_margin = calculate_margin(OrderType.SELL, symbol, volume, tick.bid)
+        
+        # Add results to table
+        if buy_margin is not None and sell_margin is not None:
+            margin_results.append({
+                "Symbol": symbol,
+                "Buy Price": tick.ask,
+                "Buy Margin": f"{buy_margin:.2f}",
+                "Sell Price": tick.bid,
+                "Sell Margin": f"{sell_margin:.2f}"
+            })
+    
+    # Display results in a pretty table
+    print(tabulate(margin_results, headers='keys', tablefmt='fancy_grid'))
     
     client.disconnect()
 
