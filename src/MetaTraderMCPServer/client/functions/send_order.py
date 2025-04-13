@@ -120,11 +120,11 @@ def send_order(
 	if not isinstance(stop_loss, float) or not isinstance(take_profit, float):
 		return { "success": False, "message": "Invalid SL or TP" }
 	if order_type in [OrderType.BUY, OrderType.BUY_LIMIT, OrderType.BUY_STOP]:
-		if stop_loss >= price:
+		if (stop_loss != 0) and (stop_loss >= price):
 			return { "success": False, "message": "Stop loss must be below the price" }
-		if take_profit <= price:
+		if (take_profit != 0) and (take_profit <= price):
 			return { "success": False, "message": "Take profit must be above the price" }
-		if stop_loss > take_profit:
+		if (stop_loss != 0) and (take_profit != 0) and (stop_loss > take_profit):
 			return { "success": False, "message": "Stop loss must be below the take profit" }
 		
 	elif order_type in [OrderType.SELL, OrderType.SELL_LIMIT, OrderType.SELL_STOP]:
@@ -156,8 +156,8 @@ def send_order(
 				"action": action,
 				"type_filling": mt5.ORDER_FILLING_FOK,
 				"comment": comment,
-				"sl": sl,
-				"tp": tp,
+				"sl": stop_loss,
+				"tp": take_profit,
 				"deviation": 20
 			}
 			
