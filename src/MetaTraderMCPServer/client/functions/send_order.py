@@ -130,11 +130,11 @@ def send_order(
 			return { "success": False, "message": "Stop loss must be less than take profit" }
 		
 	elif order_type in [OrderType.SELL, OrderType.SELL_LIMIT, OrderType.SELL_STOP]:
-		if stop_loss <= price:
+		if (stop_loss != 0) and (stop_loss <= price):
 			return { "success": False, "message": "Stop loss must be above the price" }
-		if take_profit >= price:
+		if (take_profit != 0) and (take_profit >= price):
 			return { "success": False, "message": "Take profit must be below the price" }
-		if stop_loss < take_profit:
+		if (stop_loss != 0 and take_profit != 0) and (stop_loss < take_profit):
 			return { "success": False, "message": "Stop loss must be above the take profit" }
 
 	# Comment
@@ -160,8 +160,14 @@ def send_order(
 				"comment": comment,
 				"sl": stop_loss,
 				"tp": take_profit,
-				"deviation": 20
+				"deviation": 20,
+				"position": position
 			}
+
+			if position is None:
+				del request["position"]
+			else:
+				pass
 			
 			mt5.order_send(request)
 

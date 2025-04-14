@@ -39,16 +39,27 @@ def init():
 def main():
 	client = init()
 
-	# Modify a pending order
-	modify_response = send_order(
-		connection=client._connection,
-		action=TradeRequestActions.MODIFY,
-		order=1653847435,
-		stop_loss=3000,
-		take_profit=4000,
-		price=3200,
+	# Close an open position
+	close_response = send_order(
+		client._connection,
+		action=TradeRequestActions.DEAL,
+		position=1661367229,
+		order_type="SELL",
+		symbol="BTCUSD",
+		volume=1,
 	)
-	print(modify_response)
+	print(close_response)
+
+	# # Modify a pending order
+	# modify_response = send_order(
+	# 	connection=client._connection,
+	# 	action=TradeRequestActions.MODIFY,
+	# 	order=1653847435,
+	# 	stop_loss=3000,
+	# 	take_profit=4000,
+	# 	price=3200,
+	# )
+	# print(modify_response)
 
 	# Modify SL/TP of an open order
 	# sltp_response = send_order(
