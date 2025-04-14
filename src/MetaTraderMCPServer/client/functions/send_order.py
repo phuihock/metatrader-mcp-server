@@ -83,11 +83,6 @@ def send_order(
 		- REMOVE: order
 		- CLOSE_BY: position, position_by
 	"""
-	# 1. Validate the input parameters based on the action type
-	#   - Check if the action is valid and supported
-	#   - Verify that the required parameters are provided for the given action
-	#   - Validate the data types and ranges of the input parameters
-
 	_market = MT5Market(connection)
 
 	# Validate action
@@ -312,42 +307,6 @@ def send_order(
 		case TradeRequestActions.CLOSE_BY:
 			print("CLOSE BY")
 
-	# HANDLE BASED ON THE ACTION TYPE
-
-	# 2. If order type is BUY or SELL: Check the margin requirement based on account information
-	#   - Use get_account_info function from MT5Account
-	#   - Use calculate_margin function to determine whether the margin req is satisfied
-	
-	# Etc...
-
-	# CONTINUE
-
-	# 3. Create a TradeRequest object with the provided parameters
-	#   - Initialize a TradeRequest object with the given action and symbol
-	#   - Set the order type, volume, price, and other parameters as needed
-	#   - Add any additional parameters required for the specific action
-
-	# 4. Check the request validation before sending it.
-	#   - Use order_check function from MetaTrader5 library
-	#   - Validate the request parameters and return an error message if invalid
-	
-	# 5. Use the connection object to send the TradeRequest to MetaTrader 5
-	#   - Establish a connection to the MetaTrader 5 server using the provided connection object
-	#   - Send the TradeRequest object to the server using the order_send function
-	#   - Handle any exceptions or errors that may occur during the sending process
-	
-	# 6. Handle the response from MetaTrader 5 and extract the result
-	#   - Receive the response from the MetaTrader 5 server
-	#   - Extract the result object from the response, which contains the outcome of the operation
-	#   - Check the result object for any errors or warnings
-	
-	# 7. Create a dictionary with the result and return it
-	#   - Initialize a dictionary to store the result of the operation
-	#   - Add the success flag, return code, and return message to the dictionary
-	#   - Include the original request and result object in the dictionary for further reference
-	#   - Return the dictionary containing the result of the operation
-	
-	# 8. Return the result dictionary
 	return {
 		'success': False,
 		'return_code': -1,

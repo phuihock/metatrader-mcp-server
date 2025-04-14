@@ -39,13 +39,15 @@ def init():
 def main():
 	client = init()
 
+	# Close by
+
 	# Close pending order
-	close_pending_response = send_order(
-		client._connection,
-		action=TradeRequestActions.REMOVE,
-		order=1653847435
-	)
-	print(close_pending_response)
+	# close_pending_response = send_order(
+	# 	client._connection,
+	# 	action=TradeRequestActions.REMOVE,
+	# 	order=1653847435
+	# )
+	# print(close_pending_response)
 
 	# Close an open position
 	# close_response = send_order(
