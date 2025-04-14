@@ -381,11 +381,34 @@ class MT5Orders:
 	# ===================================================================================
 	# Cancel a pending order
 	# -----------------------------------------------------------------------------------
-	# ✦ On progress
+	# ✔ Done
 	# ===================================================================================
-	def cancel_pending_order():
-		pass
+	def cancel_pending_order(self, *, id: Union[int, str]):
+		order_id = None
+		try:
+			order_id = int(id)
+		except ValueError:
+			return {
+				"error": True,
+				"message": f"Invalid order ID {id}",
+				"data": None,
+			}
+		
+		response = send_order(
+			self._connection,
+			action = TradeRequestActions.REMOVE,
+			order = order_id,
+		)
 
+		if response["success"] is False:
+			return { "error": True, "message": response["message"], "data": None }
+
+		data = response["data"]
+		return {
+			"error": False,
+			"message": f"Cancel pending order {order_id} success",
+			"data": data,
+		}
 
 	# ===================================================================================
 	# Close all open positions

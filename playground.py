@@ -39,13 +39,16 @@ def init():
 def main():
 	client = init()
 
-	pending_order = client.orders.place_pending_order(
-		type="BUY",
-		symbol="XAUUSD",
-		volume=1.25,
-		price=3200
-	)
-	print(pending_order)
+	cancel_pending = client.orders.cancel_pending_order(id=1668000451)
+	print(cancel_pending)
+	
+	# pending_order = client.orders.place_pending_order(
+	# 	type="BUY",
+	# 	symbol="XAUUSD",
+	# 	volume=1.25,
+	# 	price=3200
+	# )
+	# print(pending_order)
 
 	# print(client.orders.modify_position(
 	# 	id=1664748921,

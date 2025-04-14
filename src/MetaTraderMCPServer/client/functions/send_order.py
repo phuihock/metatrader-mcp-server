@@ -288,6 +288,7 @@ def send_order(
 				return {
 					"success": False,
 					"message": f"Parameter `order` is required for this operation",
+					"data": None,
 				}
 			
 			request = {
@@ -295,12 +296,12 @@ def send_order(
 				"order": order,
 			}
 
-			mt5.order_send(request)
+			response = mt5.order_send(request)
 
 			error_code, error_description = mt5.last_error()
 			if error_code < 0:
-				return { "success": False, "message": f"Error {error_code}: {error_description}" }
-			return { "success": True, "message": "Order sent successfully" }
+				return { "success": False, "message": f"Error {error_code}: {error_description}", "data": None }
+			return { "success": True, "message": "Order sent successfully", "data": response }
 
 		# --------
 		# Close by
