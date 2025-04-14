@@ -39,8 +39,15 @@ def init():
 def main():
 	client = init()
 
-	cancel_pending = client.orders.cancel_pending_order(id=1668000451)
-	print(cancel_pending)
+	modify_pending = client.orders.modify_pending_order(
+		id=1668004501,
+		stop_loss=3150,
+		take_profit=3320,
+	)
+	print(modify_pending)
+	
+	# cancel_pending = client.orders.cancel_pending_order(id=1668000451)
+	# print(cancel_pending)
 	
 	# pending_order = client.orders.place_pending_order(
 	# 	type="BUY",

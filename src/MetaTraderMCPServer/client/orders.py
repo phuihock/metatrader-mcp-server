@@ -325,8 +325,68 @@ class MT5Orders:
 	# -----------------------------------------------------------------------------------
 	# ✦ On progress
 	# ===================================================================================
-	def modify_pending_order():
-		pass
+	def modify_pending_order(
+		self, *,
+		id: Union[int, str],
+		price: Optional[Union[int, float]] = None,
+		stop_loss: Optional[Union[int, float]] = None,
+		take_profit: Optional[Union[int, float]] = None,
+	):
+
+		order_id = None
+		order = None
+
+		try:
+			order_id = int(id)
+		except ValueError:
+			return {
+				"error": True,
+				"message": f"Invalid order ID {id}",
+				"data": None,
+			}
+		
+		orders = get_pending_orders(
+			self._connection,
+			ticket = order_id
+		)
+
+		order = orders.iloc[0]
+		if len(orders.iloc[0]) == 0:
+			return {
+				"error": True,
+				"message": f"Invalid order ID {id}",
+				"data": None,
+			}
+
+		price = price if price else float(order["open"])
+		request = {
+			"action": TradeRequestActions.MODIFY,
+			"order": order_id,
+			"price": price,
+			"stop_loss": stop_loss,
+			"take_profit": take_profit,
+		}
+
+		if price is None:
+			del request["price"]
+		if stop_loss is None:
+			del request["stop_loss"]
+		if take_profit is None:
+			del request["take_profit"]
+
+		print(request)
+
+		response = send_order(self._connection, **request)
+
+		if response["success"] is False:
+			return { "error": True, "message": response["message"], "data": None }
+
+		data = response["data"]
+		return {
+			"error": False,
+			"message": f"Modify pending order {order_id} success",
+			"data": data,
+		}
 
 
 	# ===================================================================================

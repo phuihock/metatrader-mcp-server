@@ -112,10 +112,15 @@ def send_order(
 		return { "success": False, "message": "Invalid price" }
 
 	# Validate TP and SL
-	stop_loss = float(stop_loss)
-	take_profit = float(take_profit)
-	if not isinstance(stop_loss, float) or not isinstance(take_profit, float):
-		return { "success": False, "message": "Invalid SL or TP" }
+	if stop_loss != 0:
+		stop_loss = float(stop_loss)
+		if not isinstance(stop_loss, float):
+			return { "success": False, "message": "Invalid SL or TP" }
+	if take_profit != 0:
+		take_profit = float(take_profit)
+		if not isinstance(take_profit, float):
+			return { "success": False, "message": "Invalid SL or TP" }
+		
 	if order_type in [OrderType.BUY, OrderType.BUY_LIMIT, OrderType.BUY_STOP]:
 		if (stop_loss != 0) and (stop_loss >= price):
 			return { "success": False, "message": "Stop loss must be less than price" }
@@ -255,6 +260,7 @@ def send_order(
 				return {
 					"success": False,
 					"message": f"Parameter `order` is required for this operation",
+					"data": None,
 				}
 			
 			request = {
@@ -276,8 +282,8 @@ def send_order(
 
 			error_code, error_description = mt5.last_error()
 			if error_code < 0:
-				return { "success": False, "message": f"Error {error_code}: {error_description}" }
-			return { "success": True, "message": "Order sent successfully" }
+				return { "success": False, "message": f"Error {error_code}: {error_description}", "data": None }
+			return { "success": True, "message": "Order sent successfully", "data": None }
 
 		#----------------------
 		#  Remove pending order
