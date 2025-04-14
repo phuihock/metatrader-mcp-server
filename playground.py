@@ -39,6 +39,25 @@ def init():
 def main():
 	client = init()
 
+	pending_order = client.orders.place_pending_order(
+		type="BUY",
+		symbol="XAUUSD",
+		volume=1.25,
+		price=3200
+	)
+	print(pending_order)
+
+	# print(client.orders.modify_position(
+	# 	id=1664748921,
+	# 	stop_loss=3220,
+	# 	take_profit=3000,
+	# )["message"])
+
+	# print( client.orders.close_position(1663565395)["message"] )
+
+	# response_one = client.orders.place_market_order("SELL", "XAUUSD", 1)
+	# print(response_one["message"])
+
 	# Close by
 
 	# Close pending order

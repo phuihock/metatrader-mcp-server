@@ -143,7 +143,7 @@ def send_order(
 		case TradeRequestActions.DEAL:
 			
 			if order_type not in [OrderType.BUY, OrderType.SELL]:
-				return { "success": False, "message": "Invalid order type, must be BUY or SELL" }
+				return { "success": False, "message": "Invalid order type, must be BUY or SELL", "data": None }
 
 			request = {
 				"symbol": symbol,
@@ -164,14 +164,14 @@ def send_order(
 			else:
 				pass
 			
-			mt5.order_send(request)
+			response = mt5.order_send(request)
 
 			error_code, error_description = mt5.last_error()
 			
 			if error_code < 0:
-				return { "success": False, "message": f"Error {error_code}: {error_description}" }
+				return { "success": False, "message": f"Error {error_code}: {error_description}", "data": None }
 
-			return { "success": True, "message": "Order sent successfully" }
+			return { "success": True, "message": "Order sent successfully", "data": response }
 
 		# ----------------------------------------------------------
 		# Pending order (BUY_LIMIT, SELL_LIMIT, BUY_STOP, SELL_STOP)
@@ -179,23 +179,23 @@ def send_order(
 		case TradeRequestActions.PENDING:
 
 			if order_type not in [OrderType.BUY_LIMIT, OrderType.SELL_LIMIT, OrderType.BUY_STOP, OrderType.SELL_STOP]:
-				return { "success": False, "message": "Invalid order type, must be BUY_LIMIT, SELL_LIMIT, BUY_STOP, or SELL_STOP" }
+				return { "success": False, "message": "Invalid order type, must be BUY_LIMIT, SELL_LIMIT, BUY_STOP, or SELL_STOP", "data": None }
 
 			tick = mt5.symbol_info_tick(symbol)
 			if tick is not None:
 				match order_type:
 					case OrderType.BUY_LIMIT:
 						if price > tick.ask:
-							return { "success": False, "message": "Invalid price, must be above current ask" }
+							return { "success": False, "message": "Invalid price, must be above current ask", "data": None }
 					case OrderType.SELL_LIMIT:
 						if price < tick.bid:
-							return { "success": False, "message": "Invalid price, must be below current bid" }
+							return { "success": False, "message": "Invalid price, must be below current bid", "data": None }
 					case OrderType.BUY_STOP:
 						if price < tick.ask:
-							return { "success": False, "message": "Invalid price, must be above current ask" }
+							return { "success": False, "message": "Invalid price, must be above current ask", "data": None }
 					case OrderType.SELL_STOP:
 						if price > tick.bid:
-							return { "success": False, "message": "Invalid price, must be below current bid" }
+							return { "success": False, "message": "Invalid price, must be below current bid", "data": None }
 
 			request = {
 				"action": action,
@@ -212,12 +212,12 @@ def send_order(
 				"type_filling": OrderFilling.FOK.value,
 			}
 
-			mt5.order_send(request)
+			response = mt5.order_send(request)
 
 			error_code, error_description = mt5.last_error()
 			if error_code < 0:
-				return { "success": False, "message": f"Error {error_code}: {error_description}" }
-			return { "success": True, "message": "Order sent successfully" }
+				return { "success": False, "message": f"Error {error_code}: {error_description}", "data": None }
+			return { "success": True, "message": "Order sent successfully", "data": response }
 
 		# --------------------
 		# Modify order (SL/TP)
@@ -228,6 +228,7 @@ def send_order(
 				return {
 					"success": False,
 					"message": f"Parameter `position` is required for this operation",
+					"data": None,
 				}
 
 			request = {
@@ -238,12 +239,12 @@ def send_order(
 				"comment": comment,
 			}
 
-			mt5.order_send(request)
+			response = mt5.order_send(request)
 
 			error_code, error_description = mt5.last_error()
 			if error_code < 0:
-				return { "success": False, "message": f"Error {error_code}: {error_description}" }
-			return { "success": True, "message": "Order sent successfully" }
+				return { "success": False, "message": f"Error {error_code}: {error_description}", "data": None }
+			return { "success": True, "message": "Order sent successfully", "data": response }
 			
 		# ------------
 		# Modify order

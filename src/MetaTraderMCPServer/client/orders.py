@@ -7,6 +7,11 @@ This module handles trade execution, modification, and management.
 import pandas as pd
 from typing import Optional, Union
 
+from MetaTraderMCPServer.client.market import MT5Market
+from MetaTraderMCPServer.client.types.order_type import OrderType
+
+from .types import TradeRequestActions
+
 from .functions.get_positions import get_positions
 from .functions.get_pending_orders import get_pending_orders
 from .functions.send_order import send_order
@@ -186,29 +191,134 @@ class MT5Orders:
 	# ===================================================================================
 	# Place market order (BUY or SELL)
 	# -----------------------------------------------------------------------------------
-	# ✦ On progress
+	# ✔ Done
 	# ===================================================================================
-	def place_market_order(self, type: str, symbol: str, volume: str):
-		pass
+	def place_market_order(self, type: str, symbol: str, volume: Union[float, int]):
+		if type.upper() not in ["BUY", "SELL"]:
+			return { "error": True, "message": f"Invalid type, should be BUY or SELL.", "data": None }
+		response = send_order(
+			self._connection,
+			action=TradeRequestActions.DEAL,
+			order_type=type,
+			symbol=symbol,
+			volume=volume,
+		)
+		if response["success"] is False:
+			return { "error": True, "message": response["message"], "data": None }
+
+		data = response["data"]
+		return {
+			"error": False,
+			"message": f"{OrderType.to_string(data.request.type)} {data.request.symbol} {data.volume} LOT at {data.price} success [Position ID: {data.order}]",
+			"data": response["data"]
+		}
 
 
 	# ===================================================================================
 	# Place pending order (BUY_LIMIT, SELL_LIMIT, BUY_STOP, SELL_STOP)
 	# -----------------------------------------------------------------------------------
-	# ✦ On progress
+	# ✔ Done
 	# ===================================================================================
-	def place_pending_order(self, type: str, symbol: str, volume: str, price: Union[float, int]):
-		pass
+	def place_pending_order(
+		self,
+		*,
+		type: str,
+		symbol: str,
+		volume: Union[float, int],
+		price: Union[float, int],
+		stop_loss: Optional[Union[float, int]] = 0.0,
+		take_profit: Optional[Union[float, int]] = 0.0,
+	):
+		
+		accepted_types  = ["BUY", "SELL"]
+		if type not in accepted_types:
+			return { "error": True, "message": f"Invalid type, should be BUY or SELL.", "data": None }
+		
+		market = MT5Market(self._connection)
+		current_price = market.get_symbol_price(symbol_name=symbol)
+		if current_price is None:
+			return { "error": True, "message": f"Cannot get latest market price for {symbol}", "data": None }
+		
+		# Decide pending order type
+		order_type = None
+		price = float(price)
+		if type == "BUY":
+			order_type = "BUY_LIMIT" if current_price["ask"] > price else "BUY_STOP"
+		else:
+			order_type = "SELL_LIMIT" if current_price["bid"] < price else "SELL_STOP"
+
+		response = send_order(
+			self._connection,
+			action = TradeRequestActions.PENDING,
+			order_type = order_type,
+			symbol = symbol,
+			volume = float(volume),
+			price = float(price),
+			stop_loss = float(stop_loss),
+			take_profit = float(take_profit),
+		)
+
+		if response["success"] is False:
+			return { "error": True, "message": response["message"], "data": None }
+
+		return {
+			"error": False,
+			"message": f"Place pending order {order_type} {symbol} {volume} LOT at {price} success [Order ID: {response["data"].order}]",
+			"data": response["data"],
+		}
 
 
 	# ===================================================================================
 	# Modify an open position
 	# -----------------------------------------------------------------------------------
-	# ✦ On progress
+	# ✔ Done
 	# ===================================================================================
-	def modify_position():
-		pass
+	def modify_position(
+		self,
+		*,
+		id: Union[str, int],
+		stop_loss: Optional[Union[int, float]] = None,
+		take_profit: Optional[Union[int, float]] = None,
+	):
+		position_id = None
+		position_error = False
+		position = None
+		
+		try:
+			position_id = int(id)
+		except ValueError:
+			position_error = True
 
+		if not position_error:
+			positions = self.get_positions_by_id(position_id)
+		if positions.index.size == 0:
+			position_error = True
+		else:
+			position = positions.iloc[0]
+
+		if position_error or position is None:
+			return {
+				"error": True,
+				"message": f"Invalid position ID {id}",
+				"data": None,
+			}
+		
+		response = send_order(
+			self._connection,
+			action = TradeRequestActions.SLTP,
+			position = position_id,
+			stop_loss = stop_loss if stop_loss is not None else position["stop_loss"],
+			take_profit = take_profit if take_profit is not None else position["take_profit"],
+		)
+
+		if response["success"] is False:
+			return { "error": True, "message": response["message"], "data": None }
+
+		return {
+			"error": False,
+			"message": f"Modify position {position_id} success, SL at {stop_loss}, TP at {take_profit}, current price {response["data"].price}",
+			"data": response["data"],
+		}
 
 	# ===================================================================================
 	# Modify a pending order
@@ -222,10 +332,50 @@ class MT5Orders:
 	# ===================================================================================
 	# Close an open position
 	# -----------------------------------------------------------------------------------
-	# ✦ On progress
+	# ✔ Done
 	# ===================================================================================
-	def close_position():
-		pass
+	def close_position(self, id: Union[str, int]):
+		position_id = None
+		position_error = False
+		position = None
+		
+		try:
+			position_id = int(id)
+		except ValueError:
+			position_error = True
+
+		if not position_error:
+			positions = self.get_positions_by_id(position_id)
+		if positions.index.size == 0:
+			position_error = True
+		else:
+			position = positions.iloc[0]
+
+		if position_error or position is None:
+			return {
+				"error": True,
+				"message": f"Invalid position ID {id}",
+				"data": None,
+			}
+		
+		response = send_order(
+			self._connection,
+			action = TradeRequestActions.DEAL,
+			position = position_id,
+			order_type = "SELL" if position["type"] == "BUY" else "BUY",
+			symbol = position["symbol"],
+			volume = position["volume"],
+		)
+
+		if response["success"] is False:
+			return { "error": True, "message": response["message"], "data": None }
+
+		data = response["data"]
+		return {
+			"error": False,
+			"message": f"Close position {position_id} success at price {data.price}",
+			"data": response["data"]
+		}
 
 
 	# ===================================================================================
