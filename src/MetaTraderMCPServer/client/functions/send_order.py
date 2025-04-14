@@ -23,23 +23,24 @@ from ..types import (
 
 def send_order(
 	connection,
+	*,
 	action: Union[str, int, TradeRequestActions],
-	symbol: str,
-	volume: float,
-	order_type: Union[str, int, OrderType],
-	price: float = 0.0,
-	stop_loss: float = 0.0,
-	take_profit: float = 0.0,
-	deviation: int = 20,
-	magic: int = 0,
-	comment: str = "",
-	position: int = 0,
-	position_by: int = 0,
-	order: int = 0,
+	symbol: Optional[str] = None,
+	volume: Optional[float] = None,
+	order_type: Optional[Union[str, int, OrderType]] = None,
+	price: Optional[float] = 0.0,
+	stop_loss: Optional[float] = 0.0,
+	take_profit: Optional[float] = 0.0,
+	deviation: Optional[int] = 20,
+	magic: Optional[int] = 0,
+	comment: Optional[str] = "",
+	position: Optional[int] = 0,
+	position_by: Optional[int] = 0,
+	order: Optional[int] = 0,
 	expiration: Optional[datetime] = None,
 	type_filling: Optional[Union[str, int, OrderFilling]] = None,
 	type_time: Optional[Union[str, int, OrderTime]] = None,
-	stoplimit: float = 0.0
+	stoplimit: Optional[float] = 0.0
 ) -> Dict:
 	"""
 	Send a trading order to MetaTrader 5.
@@ -96,18 +97,19 @@ def send_order(
 	order_type = OrderType.validate(order_type)
 
 	# Validate symbol
-	if (len(_market.get_symbols(symbol)) == 0):
-		return { "success": False, "message": "Invalid symbol" }
-
-	# Ensure symbol is available
-	if not mt5.symbol_select(symbol, True):
-		return { "success": False, "message": f"Failed to select {symbol}" }
+	if symbol is not None:
+			if (len(_market.get_symbols(symbol)) == 0):
+				return { "success": False, "message": "Invalid symbol" }
+			# Ensure symbol is available
+			if not mt5.symbol_select(symbol, True):
+				return { "success": False, "message": f"Failed to select {symbol}" }
 
 	# Validate volume
-	if (volume <= 0 or volume > 100):
-		return { "success": False, "message": "Invalid volume" }
-	else:
-		volume = float(volume)
+	if volume is not None:
+		if (volume <= 0 or volume > 100):
+			return { "success": False, "message": "Invalid volume" }
+		else:
+			volume = float(volume)
 
 	# Validate price
 	price = float(price)
@@ -121,11 +123,11 @@ def send_order(
 		return { "success": False, "message": "Invalid SL or TP" }
 	if order_type in [OrderType.BUY, OrderType.BUY_LIMIT, OrderType.BUY_STOP]:
 		if (stop_loss != 0) and (stop_loss >= price):
-			return { "success": False, "message": "Stop loss must be below the price" }
+			return { "success": False, "message": "Stop loss must be less than price" }
 		if (take_profit != 0) and (take_profit <= price):
-			return { "success": False, "message": "Take profit must be above the price" }
+			return { "success": False, "message": "Take profit must be higher than the price" }
 		if (stop_loss != 0) and (take_profit != 0) and (stop_loss > take_profit):
-			return { "success": False, "message": "Stop loss must be below the take profit" }
+			return { "success": False, "message": "Stop loss must be less than take profit" }
 		
 	elif order_type in [OrderType.SELL, OrderType.SELL_LIMIT, OrderType.SELL_STOP]:
 		if stop_loss <= price:
@@ -180,8 +182,6 @@ def send_order(
 
 			tick = mt5.symbol_info_tick(symbol)
 			if tick is not None:
-				print(tick)
-				print(price)
 				match order_type:
 					case OrderType.BUY_LIMIT:
 						if price > tick.ask:
@@ -214,23 +214,68 @@ def send_order(
 			mt5.order_send(request)
 
 			error_code, error_description = mt5.last_error()
-			
 			if error_code < 0:
 				return { "success": False, "message": f"Error {error_code}: {error_description}" }
-
 			return { "success": True, "message": "Order sent successfully" }
 
 		# --------------------
 		# Modify order (SL/TP)
 		# --------------------    
 		case TradeRequestActions.SLTP:
-			print("MODIFY SL/TP")
+
+			if position is None:
+				return {
+					"success": False,
+					"message": f"Parameter `position` is required for this operation",
+				}
+
+			request = {
+				"action": action,
+				"position": position,
+				"sl": stop_loss,
+				"tp": take_profit,
+				"comment": comment,
+			}
+
+			mt5.order_send(request)
+
+			error_code, error_description = mt5.last_error()
+			if error_code < 0:
+				return { "success": False, "message": f"Error {error_code}: {error_description}" }
+			return { "success": True, "message": "Order sent successfully" }
 			
 		# ------------
 		# Modify order
 		# ------------
 		case TradeRequestActions.MODIFY:
-			print("MODIFY")
+
+			if order is None:
+				return {
+					"success": False,
+					"message": f"Parameter `order` is required for this operation",
+				}
+			
+			request = {
+				"action": action,
+				"order": order,
+				"price": price,
+				"sl": stop_loss,
+				"tp": take_profit,
+			}
+
+			if price is None:
+				del request["price"]
+			if stop_loss is None:
+				del request["sl"]
+			if take_profit is None:
+				del request["tp"]
+
+			mt5.order_send(request)
+
+			error_code, error_description = mt5.last_error()
+			if error_code < 0:
+				return { "success": False, "message": f"Error {error_code}: {error_description}" }
+			return { "success": True, "message": "Order sent successfully" }
 
 		# --------
 		# Close by

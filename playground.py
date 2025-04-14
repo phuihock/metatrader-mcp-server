@@ -39,16 +39,51 @@ def init():
 def main():
 	client = init()
 
-	# Place an order
-	# BUY BTCUSD 1 LOT
-	buy_response = send_order(
-		client._connection,
-		action=TradeRequestActions.DEAL,
-		order_type="BUY",
-		symbol="BTCUSD",
-		volume=1,
+	# Modify a pending order
+	modify_response = send_order(
+		connection=client._connection,
+		action=TradeRequestActions.MODIFY,
+		order=1653847435,
+		stop_loss=3000,
+		take_profit=4000,
+		price=3200,
 	)
-	print(buy_response)
+	print(modify_response)
+
+	# Modify SL/TP of an open order
+	# sltp_response = send_order(
+	# 	connection=client._connection,
+	# 	action=TradeRequestActions.SLTP,
+	# 	position=1661365021,
+	# 	stop_loss=83500,
+	# 	take_profit=86000,
+	# 	symbol=None,
+	# 	order_type=None,
+	# 	volume=None,
+	# )
+	# print(sltp_response)
+
+	# Place a pending order
+	# pending_response = send_order(
+	# 	client._connection,
+	# 	action=TradeRequestActions.PENDING,
+	# 	order_type="BUY_LIMIT",
+	# 	symbol="BTCUSD",
+	# 	volume=1,
+	# 	price=84000,
+	# )
+	# print(pending_response)
+
+	# Place a market execution
+	# BUY BTCUSD 1 LOT
+	# buy_response = send_order(
+	# 	client._connection,
+	# 	action=TradeRequestActions.DEAL,
+	# 	order_type="BUY",
+	# 	symbol="BTCUSD",
+	# 	volume=1,
+	# )
+	# print(buy_response)
 
 	client.disconnect()
 
