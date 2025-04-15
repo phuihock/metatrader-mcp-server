@@ -84,4 +84,5 @@ def get_positions(
                 result = result[result['type_code'] == type_code]
 
     # Return result
+    result.drop("type_code", axis=1, inplace=True)
     return result

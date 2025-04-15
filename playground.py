@@ -1,12 +1,10 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 """
 MT5 Connection Playground
 A simple script to demonstrate connecting to and disconnecting from MetaTrader 5
 """
 import sys
 import io
+import os
 
 # Backup the original stdout
 original_stdout = sys.stdout
@@ -14,14 +12,7 @@ original_stdout = sys.stdout
 # Redirect stdout to suppress output temporarily
 sys.stdout = io.StringIO()
 
-import MetaTrader5 as mt5
-import time
-from MetaTraderMCPServer.client.client import MT5Client
-from MetaTraderMCPServer.client.connection import MT5Connection
-from MetaTraderMCPServer.client.functions.calculate_margin import calculate_margin
-from MetaTraderMCPServer.client.functions.calculate_profit import calculate_profit
-from MetaTraderMCPServer.client.functions.send_order import send_order
-from MetaTraderMCPServer.client.types import OrderType, TradeRequestActions
+from MetaTraderMCPServer.client import MT5Client
 from tabulate import tabulate
 
 # Restore the original stdout
@@ -37,104 +28,69 @@ def init():
 	return client
 
 def main():
+
+	os.system('cls')
+
+	# Open connection to MetaTrader 5 Terminal
 	client = init()
 
-	modify_pending = client.orders.modify_pending_order(
-		id=1668004501,
-		stop_loss=3150,
-		take_profit=3320,
+	# Get list of open positions
+	print("\n\n🪿 LIST ALL OPEN POSITIONS \n")
+	open_positions = client.orders.get_all_positions()
+	print(tabulate(open_positions, headers="keys", tablefmt="psql"))
+
+	# Get list of pending orders
+	print("\n\n🦢 LIST ALL PENDING ORDERS \n")
+	pending_orders = client.orders.get_all_pending_orders()
+	print(tabulate(pending_orders, headers="keys", tablefmt="psql"))
+
+	# Place new market order
+	print("\n\n🐶 PLACE NEW MARKET ORDERS \n")
+	print("> Placing market order (BUY EURUSD 0.1 LOT)...")
+	new_market_order_1 = client.orders.place_market_order(
+		type="BUY",
+		symbol="EURUSD",
+		volume=0.1,
 	)
-	print(modify_pending)
-	
-	# cancel_pending = client.orders.cancel_pending_order(id=1668000451)
-	# print(cancel_pending)
-	
-	# pending_order = client.orders.place_pending_order(
-	# 	type="BUY",
-	# 	symbol="XAUUSD",
-	# 	volume=1.25,
-	# 	price=3200
-	# )
-	# print(pending_order)
+	print(new_market_order_1["message"])
+	print("\n")
+	print("> Placing market order (SELL USDJPY 0.1 LOT)...")
+	new_market_order_2 = client.orders.place_market_order(
+		type="SELL",
+		symbol="USDJPY",
+		volume=0.1,
+	)
+	print(new_market_order_2["message"])
+	print("\n")
+	open_positions = client.orders.get_all_positions()
+	print(tabulate(open_positions, headers="keys", tablefmt="psql"))
 
-	# print(client.orders.modify_position(
-	# 	id=1664748921,
-	# 	stop_loss=3220,
-	# 	take_profit=3000,
-	# )["message"])
 
-	# print( client.orders.close_position(1663565395)["message"] )
+	# Place new pending orders
+	print("\n\n🐱 PLACE NEW PENDING ORDERS \n")
+	print("> Placing pending order (SELL GBPUSD 0.1 LOT at 1.32400)...")
+	new_pending_order_1 = client.orders.place_pending_order(
+		type="SELL",
+		symbol="GBPUSD",
+		volume=0.1,
+		price=1.32400,
+	)
+	print(new_pending_order_1["message"])
+	print("\n")
+	print("> Placing pending order (BUY GBPUSD 0.1 LOT at 1.32100)...")
+	new_pending_order_2 = client.orders.place_pending_order(
+		type="BUY",
+		symbol="GBPUSD",
+		volume=0.1,
+		price=1.32100,
+	)
+	print(new_pending_order_2["message"])
+	print("\n")
+	pending_orders = client.orders.get_all_pending_orders()
+	print(tabulate(pending_orders, headers="keys", tablefmt="psql"))
 
-	# response_one = client.orders.place_market_order("SELL", "XAUUSD", 1)
-	# print(response_one["message"])
 
-	# Close by
-
-	# Close pending order
-	# close_pending_response = send_order(
-	# 	client._connection,
-	# 	action=TradeRequestActions.REMOVE,
-	# 	order=1653847435
-	# )
-	# print(close_pending_response)
-
-	# Close an open position
-	# close_response = send_order(
-	# 	client._connection,
-	# 	action=TradeRequestActions.DEAL,
-	# 	position=1661367229,
-	# 	order_type="SELL",
-	# 	symbol="BTCUSD",
-	# 	volume=1,
-	# )
-	# print(close_response)
-
-	# # Modify a pending order
-	# modify_response = send_order(
-	# 	connection=client._connection,
-	# 	action=TradeRequestActions.MODIFY,
-	# 	order=1653847435,
-	# 	stop_loss=3000,
-	# 	take_profit=4000,
-	# 	price=3200,
-	# )
-	# print(modify_response)
-
-	# Modify SL/TP of an open order
-	# sltp_response = send_order(
-	# 	connection=client._connection,
-	# 	action=TradeRequestActions.SLTP,
-	# 	position=1661365021,
-	# 	stop_loss=83500,
-	# 	take_profit=86000,
-	# 	symbol=None,
-	# 	order_type=None,
-	# 	volume=None,
-	# )
-	# print(sltp_response)
-
-	# Place a pending order
-	# pending_response = send_order(
-	# 	client._connection,
-	# 	action=TradeRequestActions.PENDING,
-	# 	order_type="BUY_LIMIT",
-	# 	symbol="BTCUSD",
-	# 	volume=1,
-	# 	price=84000,
-	# )
-	# print(pending_response)
-
-	# Place a market execution
-	# BUY BTCUSD 1 LOT
-	# buy_response = send_order(
-	# 	client._connection,
-	# 	action=TradeRequestActions.DEAL,
-	# 	order_type="BUY",
-	# 	symbol="BTCUSD",
-	# 	volume=1,
-	# )
-	# print(buy_response)
-
+	# Close MetaTrader 5 connection
 	client.disconnect()
 
 if __name__ == "__main__":

@@ -5,11 +5,10 @@ This module implements a function to calculate price levels for take profit and 
 based on desired profit/loss targets.
 """
 import MetaTrader5 as mt5
-from typing import Optional, Union, Tuple
-import math
+from typing import Optional, Union
 
-from MetaTraderMCPServer.client.types import OrderType
-from MetaTraderMCPServer.client.functions.calculate_profit import calculate_profit
+from ..types import OrderType
+from .calculate_profit import calculate_profit
 
 
 def calculate_price_target(
