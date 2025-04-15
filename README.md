@@ -32,6 +32,18 @@ python -m build
 
 The build result will be in `dist/` folder.
 
+### Testing
+
+To run the test suite and generate a comprehensive Markdown report:
+
+```bash
+pytest -s tests/client/order.py
+```
+
+Test reports will be saved in `tests/reports/` with a timestamped filename.
+
+For detailed instructions, see the [Testing Guide](docs/development/testing.md).
+
 ### Publishing to Test PyPI
 
 ```
