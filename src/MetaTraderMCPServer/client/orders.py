@@ -7,10 +7,10 @@ This module handles trade execution, modification, and management.
 import pandas as pd
 from typing import Optional, Union
 
-from .market import MT5Market
 from .types import TradeRequestActions
-from .order import get_positions, get_pending_orders, send_order
-from .order import place_market_order, place_pending_order
+from .order import get_positions, get_all_positions, get_positions_by_symbol, get_positions_by_currency, get_positions_by_id
+from .order import get_pending_orders, send_order
+from .order import place_market_order, place_pending_order, modify_position
 
 
 class MT5Orders:
@@ -25,20 +25,19 @@ class MT5Orders:
 	
 
 	def get_all_positions(self) -> pd.DataFrame:
-		return get_positions(self._connection)
+		return get_all_positions(self._connection)
 
 
 	def get_positions_by_symbol(self, symbol: str) -> pd.DataFrame:
-		return get_positions(self._connection, symbol_name=symbol)
+		return get_positions_by_symbol(self._connection, symbol)
 
 
 	def get_positions_by_currency(self, currency: str) -> pd.DataFrame:
-		currency_filter = f"*{currency}*"
-		return get_positions(self._connection, group=currency_filter)
+		return get_positions_by_currency(self._connection, currency)
 
 
 	def get_positions_by_id(self, id: Union[int, str]) -> pd.DataFrame:
-		return get_positions(self._connection, ticket=id)
+		return get_positions_by_id(self._connection, id)
 
 
 	def get_all_pending_orders(self) -> pd.DataFrame:
@@ -62,74 +61,12 @@ class MT5Orders:
 		return place_market_order(self._connection, type=type, symbol=symbol, volume=volume)
 	
 	
-	def place_pending_order(
-		self,
-		*,
-		type: str,
-		symbol: str,
-		volume: Union[float, int],
-		price: Union[float, int],
-		stop_loss: Optional[Union[float, int]] = 0.0,
-		take_profit: Optional[Union[float, int]] = 0.0,
-	):
-		
-		return place_pending_order(
-			self._connection,
-			type=type,
-			symbol=symbol,
-			volume=volume,
-			price=price,
-			stop_loss=stop_loss,
-			take_profit=take_profit,
-		)
+	def place_pending_order(self, *, type: str, symbol: str, volume: Union[float, int], price: Union[float, int], stop_loss: Optional[Union[float, int]] = 0.0, take_profit: Optional[Union[float, int]] = 0.0):
+		return place_pending_order(self._connection, type=type, symbol=symbol, volume=volume, price=price, stop_loss=stop_loss, take_profit=take_profit)
 
 
-	def modify_position(
-		self,
-		id: Union[str, int],
-		*,
-		stop_loss: Optional[Union[int, float]] = None,
-		take_profit: Optional[Union[int, float]] = None,
-	):
-		position_id = None
-		position_error = False
-		position = None
-		
-		try:
-			position_id = int(id)
-		except ValueError:
-			position_error = True
-
-		if not position_error:
-			positions = self.get_positions_by_id(position_id)
-		if positions.index.size == 0:
-			position_error = True
-		else:
-			position = positions.iloc[0]
-
-		if position_error or position is None:
-			return {
-				"error": True,
-				"message": f"Invalid position ID {id}",
-				"data": None,
-			}
-		
-		response = send_order(
-			self._connection,
-			action = TradeRequestActions.SLTP,
-			position = position_id,
-			stop_loss = stop_loss if stop_loss is not None else position["stop_loss"],
-			take_profit = take_profit if take_profit is not None else position["take_profit"],
-		)
-
-		if response["success"] is False:
-			return { "error": True, "message": response["message"], "data": None }
-
-		return {
-			"error": False,
-			"message": f"Modify position {position_id} success, SL at {stop_loss}, TP at {take_profit}, current price {response["data"].price}",
-			"data": response["data"],
-		}
+	def modify_position(self, id: Union[str, int], *, stop_loss: Optional[Union[int, float]] = None, take_profit: Optional[Union[int, float]] = None):
+		return modify_position(self._connection, id, stop_loss=stop_loss, take_profit=take_profit)
 
 
 	def modify_pending_order(
@@ -178,8 +115,6 @@ class MT5Orders:
 			del request["stop_loss"]
 		if take_profit is None:
 			del request["take_profit"]
-
-		print(request)
 
 		response = send_order(self._connection, **request)
 
