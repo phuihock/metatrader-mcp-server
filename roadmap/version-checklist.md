@@ -29,7 +29,7 @@ Version 0.1 is focused on bridging the official MetaTrader5 Python library. Here
 | **0.0.2** | Account module | ✅ | ✅ |
 | **0.0.3** | Market module | ✅ | ✅ |
 | **0.0.4** | History module | ✅ | ✅ |
-| **0.0.5** | Order module | 🕑 | - |
-| **0.0.6** | Client package refactor | - | - |
+| **0.0.6** | Order module | ✅ | - |
+| **0.0.7** | Client package refactor | - | - |
 
-All version after 0.0.6 and before 0.1.0 are patches and bug fixes.
+All version after 0.0.7 and before 0.1.0 are patches and bug fixes.
