@@ -12,13 +12,16 @@ The project is organized into two main modules:
 
 ### Client Module 🖥️
 
-The client module handles all communication with the MetaTrader 5 terminal:
+The client module provides a unified Python interface for MetaTrader 5 automation—connect, trade, analyze, and manage your MT5 terminal with a single, easy-to-use client. Perfect for algo trading, analytics, and robust trading automation! 🚀
 
-- [**Connection**](client/connection.md) - Establish and manage connections to the MetaTrader 5 terminal
-- [**Account**](client/account.md) - Access account information and trading status
-- **Market** (Coming Soon) - Retrieve market data and symbol information
-- **Orders** (Coming Soon) - Execute trades and manage orders
-- [**History**](client/history.md) - Access historical trade data and statistics
+**Key Features:**
+- Unified `MT5Client` class to manage all MetaTrader 5 operations
+- Submodules for account info, market data, trading/order management, historical data, and connection handling
+- Simple initialization and configuration
+- Designed for both beginners and advanced users
+
+For a detailed guide and usage examples, see the [Client Module Documentation](metatrader_client/README.md).
+
 
 ### Server Module 🌐
 
@@ -28,29 +31,6 @@ The server module implements the Model Context Protocol interface:
 - **Tools** (Coming Soon) - Implements MCP tools for trading operations
 - **Security** (Coming Soon) - Authentication and authorization for the MCP server
 
-## Quick Start Guide 🚀
-
-```python
-from metatrader_client.connection import MT5Connection
-
-# Set up configuration
-config = {
-    "login": 12345678,
-    "password": "your-password",
-    "server": "Your-Broker-Server"
-}
-
-# Connect to MetaTrader 5
-connection = MT5Connection(config)
-connection.connect()
-
-# Check connection status
-print(f"Connected: {connection.is_connected()}")
-print(f"Terminal info: {connection.get_terminal_info()}")
-
-# Disconnect when done
-connection.disconnect()
-```
 
 ## Installation 💿
 
@@ -66,25 +46,9 @@ pip install -e .
 
 ## Requirements 📋
 
+- Windows 10 or higher
 - Python 3.13 or higher
 - MetaTrader 5 terminal installed
-- `MetaTrader5` Python package (automatically installed as a dependency)
-
-## Contributing 🤝
-
-Contributions are welcome! Please check out our [contributing guidelines](../CONTRIBUTING.md) for details.
-
-## Testing 🧪
-
-We have comprehensive tests for all modules. Run them using:
-
-```bash
-# Run all tests
-python tests/run_tests.py
-
-# Run specific module tests
-python tests/client/connection.py
-```
 
 ## License 📄
 
@@ -92,4 +56,4 @@ This project is licensed under the MIT License - see the [LICENSE](../LICENSE) f
 
 ---
 
-*This documentation was last updated on April 10, 2025.*
+*This documentation was last updated on April 16, 2025.*

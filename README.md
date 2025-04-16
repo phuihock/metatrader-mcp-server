@@ -2,7 +2,7 @@
 
 This is a Model Context Protocol (MCP) server built with Python to enable AI LLMs to trade using MetaTrader platform.
 
-## Road to v1
+## Project Roadmap
 
 For full version checklist, see [version-checklist.md](roadmap/version-checklist.md).
 
@@ -15,6 +15,10 @@ For full version checklist, see [version-checklist.md](roadmap/version-checklist
 | Windsurf integration | - | - | - |
 | Claude Desktop integration | - | - | - |
 | Publish to PyPi | - | - | - |
+
+## Documentation
+
+For developers, see [Developer's Documentation](docs/README.md).
 
 ## Development Instructions
 
