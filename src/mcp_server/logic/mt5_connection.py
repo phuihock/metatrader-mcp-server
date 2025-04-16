@@ -91,7 +91,7 @@ def get_mt5_client() -> Optional[Any]:
         Optional[MT5Client]: The MT5 client instance, or None if not available
     """
     global mt5_client, _last_connection_attempt
-    
+
     # Quick check without lock first
     if mt5_client and mt5_client.is_connected():
         return mt5_client

@@ -38,30 +38,6 @@ mcp = FastMCP(name=settings.SERVER_NAME, lifespan=lifespan) # Pass lifespan here
 mcp_logger.info(f"Initialized FastMCP server: {settings.SERVER_NAME}")
 
 # Register account tools
-@mcp.tool()
-def get_balance() -> float:
-    """Get user's account balance."""
-    tools_logger.debug("get_balance tool called")
-    
-    # Try to get real balance from MT5 if available
-    if mt5_connection.get_mt5_client() and settings.ENABLE_TRADING_TOOLS:
-        client = mt5_connection.get_mt5_client()
-        if client:
-            try:
-                balance = client.account.get_balance()
-                tools_logger.info(f"Retrieved actual balance: {balance}")
-                return balance
-            except Exception as e:
-                tools_logger.error(f"Error getting balance: {str(e)}")
-    
-    # Fallback to demo data
-    if settings.ENABLE_DEMO_TOOLS:
-        demo_balance = random.randint(100_000, 400_000)
-        tools_logger.debug(f"Using demo balance: {demo_balance}")
-        return float(demo_balance)
-    else:
-        tools_logger.warning("Neither MT5 nor demo tools available")
-        return 0.0
 
 @mcp.tool()
 def get_account_info() -> dict:
@@ -69,27 +45,16 @@ def get_account_info() -> dict:
     tools_logger.debug("get_account_info tool called")
     
     # Try to get real info from MT5 if available
-    if mt5_connection.get_mt5_client() and settings.ENABLE_TRADING_TOOLS:
-        client = mt5_connection.get_mt5_client()
-        if client:
-            try:
-                info = client.account.get_account_info()
-                return dict(info._asdict()) if info else {}
-            except Exception as e:
-                tools_logger.error(f"Error getting account info: {str(e)}")
-    
-    # Fallback to demo data
-    if settings.ENABLE_DEMO_TOOLS:
-        return {
-            "balance": random.randint(100_000, 400_000),
-            "equity": random.randint(100_000, 400_000),
-            "margin": random.randint(1000, 10000),
-            "margin_level": random.uniform(100, 1000),
-            "leverage": 100,
-            "currency": "USD"
-        }
-    else:
-        return {}
+    client = mt5_connection.get_mt5_client()
+    mt5_logger.debug(client)
+    if client:
+        try:
+            info = client.account.get_account_info()
+            return info
+        except Exception as e:
+            tools_logger.error(f"Error getting account info: {str(e)}")
+
+    return {}
 
 # This exports the mcp instance for the mcp dev cli tool to use
 app = mcp
