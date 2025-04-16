@@ -33,11 +33,12 @@ dependencies = [
   "uvicorn[standard]>=0.34.1",
   "pydantic>=2.11.3",
   "pydantic-settings>=2.8.1",
+  "mcp[cli]>=1.6.0",
 ]
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["MetaTraderMCPServer*", "metatrader_client*"]
+include = ["mcp_server*", "metatrader_client*"]
 
 [project.urls]
 "Homepage" = "https://github.com/ariadng/metatrader-mcp-server"

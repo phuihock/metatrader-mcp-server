@@ -3,28 +3,16 @@
 ```
 /src/mcp/
 ├── __init__.py
-├── main.py                     # FastAPI app instance & main entry point
-├── api/                        # FastAPI routers and dependencies
-│   ├── __init__.py
-│   ├── endpoints.py            # Combined API endpoints for /mcp (POST) and /events (GET SSE)
-│   └── deps.py                 # Dependencies (e.g., security, getting managers)
-├── core/                       # Core logic (config, security, logging)
+├── main.py                     # FastMCP server instance & main entry point
+├── core/                       # Core config, security, logging (as needed)
 │   ├── __init__.py
 │   ├── config.py
-│   ├── security.py
-│   └── logging_config.py
-├── logic/                      # Core MCP logic handlers
+│   └── logging_config.py  
+├── logic/                      # Business logic & models
 │   ├── __init__.py
-│   ├── tool_registry.py
-│   ├── resource_manager.py
-│   ├── connection_manager.py   # For SSE
-│   ├── models.py               # Pydantic models
-│   └── errors.py
-├── tools/                      # Tool implementations
-│   ├── __init__.py
-│   └── metatrader_tools.py     # Example tool specific to your domain
-└── transports/                 # Handlers for specific transport details
+│   ├── models.py               # Pydantic models (as needed)
+│   └── errors.py               # Error handling
+└── tools/                      # MCP tool implementations
     ├── __init__.py
-    ├── http_handler.py
-    └── sse_handler.py
+    └── metatrader_tools.py     # MetaTrader-specific tools
 ```

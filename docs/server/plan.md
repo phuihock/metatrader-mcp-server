@@ -1,27 +1,25 @@
-# MCP Server Implementation Plan
+# MCP Server Implementation Plan ✨
 
-A step-by-step guide to implementing the MetaTrader MCP Server.
+A step-by-step guide to implementing the MetaTrader MCP Server using FastMCP.
 
 ---
 
-## Phase 1: Foundation, HTTP Server & Core Components 🏗️
+## Phase 1: Foundation & MCP Setup 🏗️
 
-> **Rationale:** To enable incremental, test-driven development, we start by implementing basic HTTP functionality. This allows us to verify the server is running and test each new feature as it is added.
+> **Rationale:** Build a simple but functional MCP server that can be installed in Claude Desktop and other MCP clients.
 
 1. **Set up project structure**
-   - Create all necessary directory structures and empty Python files
+   - Create directory structure following simplified architecture
    - Add `__init__.py` files with appropriate imports
 
-2. **Basic HTTP server setup**
-   - Implement a minimal FastAPI app in `main.py`
-   - Add a simple health check endpoint (e.g., `/ping` or `/health`)
-   - Ensure the server can be started and tested immediately
+2. **Basic MCP server setup**
+   - Implement FastMCP server in `main.py`
+   - Add a sample tool to verify functionality
+   - Ensure the server can be installed in Claude Desktop
 
 3. **Core configuration**
    - Implement `core/config.py` with environment variables and settings
-   - Create configuration for development and production environments
-   - Set up logging in `core/logging_config.py`
-
+   - Set up logging in `core/logging_config.py` (as needed)
 
 ---
 
@@ -29,28 +27,31 @@ A step-by-step guide to implementing the MetaTrader MCP Server.
 
 4. **Define data models**
    - Implement Pydantic models in `logic/models.py` for:
-     - MCP requests/responses
-     - Trading operations
-     - User sessions
+     - MCP request/response helpers
+     - Trading operation models
+     - Any data structures needed for tools/resources
 
 5. **Error handling framework**
    - Create custom exceptions in `logic/errors.py`
-   - Implement error responses with proper codes
+   - Implement error handling for MCP tools
 
 ---
 
-## Phase 3: Core Logic Implementation 🧠
+## Phase 3: MetaTrader Tools & Resources 🧠
 
-6. **Resource Manager**
-   - Implement `logic/resource_manager.py`
-   - Create methods to manage connections to MetaTrader
+6. **Basic Trading Tools**
+   - Implement account information tools (balance, equity, etc.)
+   - Add market data tools (prices, symbols)
+   - Create position management tools
 
-7. **Connection Manager**
-   - Build SSE connection handling in `logic/connection_manager.py`
-   - Implement event broadcasting mechanism
+7. **Advanced Trading Tools**
+   - Implement order placement tools (market, limit, stop)
+   - Add order management tools (modify, cancel)
+   - Create trade analysis tools
 
-8. **Tool Registry**
-   - Create tool registration system in `logic/tool_registry.py`
+8. **Resources & Prompts**
+   - Add MCP resources for persistent data
+   - Implement prompts for common trading scenarios
    - Set up method to dynamically register trading tools
 
 ---
