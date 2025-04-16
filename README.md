@@ -8,7 +8,7 @@ This is a Model Context Protocol (MCP) server built with Python to enable AI LLM
 
 ## Project Roadmap
 
-For full version checklist, see [version-checklist.md](roadmap/version-checklist.md).
+For full version checklist, see [version-checklist.md](docs/roadmap/version-checklist.md).
 
 | Task | Status | Done | Tested |
 |------|--------|------|--------|
