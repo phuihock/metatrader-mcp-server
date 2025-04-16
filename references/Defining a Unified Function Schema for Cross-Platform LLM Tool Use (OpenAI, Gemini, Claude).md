@@ -4,7 +4,7 @@ Okay, here is the report formatted as copy-able markdown text.
 
 ## 1. Introduction
 
-Integrating Large Language Models (LLMs) with external tools and functions significantly enhances their capabilities, allowing them to interact with real-time data, execute actions, and interface with existing software systems.[1, 2, 3] Developers building applications, such as Python libraries with classes and modules containing functions, often need these functions to be callable by LLMs via APIs like OpenAI's Function Calling, Google's Gemini Tool/Function Calling, and Anthropic's Claude Tool Use.
+Integrating Large Language Models (LLMs) with external tools and functions significantly enhances their capabilities, allowing them to interact with real-time data, execute actions, and interface with existing software systems. Developers building applications, such as Python libraries with classes and modules containing functions, often need these functions to be callable by LLMs via APIs like OpenAI's Function Calling, Google's Gemini Tool/Function Calling, and Anthropic's Claude Tool Use.
 
 A primary challenge arises from the subtle differences in how each platform requires these functions or tools to be defined. Maintaining separate definitions for each API increases complexity and the potential for inconsistencies. This document proposes a unified base schema structure for defining Python functions, designed to capture the common requirements of OpenAI, Google Gemini, and Anthropic Claude APIs. It details the minimal adjustments needed to adapt this unified schema for each specific platform and addresses how to represent nested Python structures (modules/classes) within the required flat naming scheme. The goal is to provide clear, actionable documentation for developers seeking a maintainable and cross-compatible approach to LLM tool definition.
 
@@ -14,7 +14,9 @@ Before proposing a unified schema, it is essential to understand the specific re
 
 ### 2.1. OpenAI Function Calling Schema
 
-OpenAI's Chat Completions API utilizes a `tools` parameter, which is an array of tool definitions. For functions, the structure is as follows [4]:json
+OpenAI's Chat Completions API utilizes a `tools` parameter, which is an array of tool definitions. For functions, the structure is as follows:
+
+```json
 {
   "type": "function",
   "function": {
@@ -42,13 +44,13 @@ OpenAI's Chat Completions API utilizes a `tools` parameter, which is an array of
 
 *   **`type`**: Must be `"function"`.
 *   **`function`**: An object containing the function details.
-    *   **`name`**: (String) The function's identifier.[4]
-    *   **`description`**: (String, Optional but Recommended) Explains the function's purpose to the model.[4] Good descriptions are vital for the model to determine when to use the function.[5, 6]
-    *   **`parameters`**: (Object) Defines the input arguments using **JSON Schema**.[4, 7] The top level must be `type: "object"`, with arguments defined under `properties`. The `required` array lists mandatory arguments. OpenAI's tooling can sometimes leverage Pydantic models or docstrings to help generate this schema.[6] While OpenAI aims for schema adherence, especially with "Structured Outputs" features in newer models like GPT-4o, historical issues with strict enforcement have been noted, making robust client-side validation still important.[5, 8, 9]
+    *   **`name`**: (String) The function's identifier.
+    *   **`description`**: (String, Optional but Recommended) Explains the function's purpose to the model. Good descriptions are vital for the model to determine when to use the function.
+    *   **`parameters`**: (Object) Defines the input arguments using **JSON Schema**. The top level must be `type: "object"`, with arguments defined under `properties`. The `required` array lists mandatory arguments. OpenAI's tooling can sometimes leverage Pydantic models or docstrings to help generate this schema. While OpenAI aims for schema adherence, especially with "Structured Outputs" features in newer models like GPT-4o, historical issues with strict enforcement have been noted, making robust client-side validation still important.
 
 ### 2.2. Google Gemini Tool/Function Calling Schema
 
-Google Gemini uses a `tools` parameter containing `FunctionDeclaration` objects. The structure for a `FunctionDeclaration` is [10]:
+Google Gemini uses a `tools` parameter containing `FunctionDeclaration` objects. The structure for a `FunctionDeclaration` is:
 
 ```json
 {
@@ -73,13 +75,13 @@ Google Gemini uses a `tools` parameter containing `FunctionDeclaration` objects.
 }
 ```
 
-*   **`name`**: (String) The function's identifier. Must adhere to specific naming constraints (alphanumeric, underscore, dot, dash, max 64 chars).[10]
-*   **`description`**: (String, Optional but Recommended) Explains the function's purpose.[10] The model uses this to decide when and how to call the function.[2, 11]
-*   **`parameters`**: (Object, Optional) Defines input arguments using **OpenAPI 3.0 JSON Schema Object format**.[10, 12] While based on OpenAPI 3.0, for common parameter types (string, number, boolean, array, object), the structure closely mirrors standard JSON Schema.[2, 13] Note that the Gemini documentation often uses uppercase enum values for types (e.g., `"OBJECT"`, `"STRING"`).[10] The Python SDK can automatically generate schemas from Python function definitions and docstrings.[13, 14] Gemini supports parallel function calling, where the model might request multiple function executions in a single turn.[2, 11]
+*   **`name`**: (String) The function's identifier. Must adhere to specific naming constraints (alphanumeric, underscore, dot, dash, max 64 chars).
+*   **`description`**: (String, Optional but Recommended) Explains the function's purpose.[10] The model uses this to decide when and how to call the function.
+*   **`parameters`**: (Object, Optional) Defines input arguments using **OpenAPI 3.0 JSON Schema Object format**. While based on OpenAPI 3.0, for common parameter types (string, number, boolean, array, object), the structure closely mirrors standard JSON Schema. Note that the Gemini documentation often uses uppercase enum values for types (e.g., `"OBJECT"`, `"STRING"`). The Python SDK can automatically generate schemas from Python function definitions and docstrings. Gemini supports parallel function calling, where the model might request multiple function executions in a single turn.
 
 ### 2.3. Anthropic Claude Tool Use Schema
 
-Anthropic Claude uses a `tools` parameter, which is a list of tool definition objects [3]:
+Anthropic Claude uses a `tools` parameter, which is a list of tool definition objects:
 
 ```json
 {
@@ -103,18 +105,18 @@ Anthropic Claude uses a `tools` parameter, which is a list of tool definition ob
 }
 ```
 
-*   **`name`**: (String) The tool's identifier. Must match the regex `^[a-zA-Z0-9_-]{1,64}$`.[3]
-*   **`description`**: (String) A **highly detailed** description is crucial for performance. It should explain what the tool does, when to use it, parameter meanings, and limitations.[3, 15] Anthropic emphasizes detailed descriptions over examples.[3]
-*   **`input_schema`**: (Object) Defines the expected input parameters using **JSON Schema**.[3, 15] Like the others, it typically has `type: "object"` at the top level, with parameters defined under `properties` and mandatory ones listed in `required`. Tools can be used not just for function calls but anytime structured JSON output conforming to a schema is desired.[3] Anthropic also offers predefined tools like a text editor [16] or computer interaction tools.[17]
+*   **`name`**: (String) The tool's identifier. Must match the regex `^[a-zA-Z0-9_-]{1,64}$`.
+*   **`description`**: (String) A **highly detailed** description is crucial for performance. It should explain what the tool does, when to use it, parameter meanings, and limitations. Anthropic emphasizes detailed descriptions over examples.
+*   **`input_schema`**: (Object) Defines the expected input parameters using **JSON Schema**. Like the others, it typically has `type: "object"` at the top level, with parameters defined under `properties` and mandatory ones listed in `required`. Tools can be used not just for function calls but anytime structured JSON output conforming to a schema is desired. Anthropic also offers predefined tools like a text editor or computer interaction tools.
 
 ### 2.4. Commonalities and Key Differences
 
 *   **Common Core:** All three APIs require a `name`, `description`, and a parameter definition structure (`parameters` or `input_schema`).
-*   **Parameter Standard:** All effectively use JSON Schema (or the closely related OpenAPI 3.0 Schema for Gemini) to define parameters.[3, 4, 10] This shared foundation is key to enabling a unified approach.
-*   **Description Emphasis:** While important for all, Anthropic places the strongest emphasis on highly detailed descriptions for reliable tool use.[3]
-*   **Structural Wrapping:** The main difference lies in how the core information (`name`, `description`, `parameters`) is nested. OpenAI wraps it inside `{"type": "function", "function": {...}}`.[4] Gemini uses a flat `FunctionDeclaration` object.[10] Anthropic uses a flat tool object but renames the parameter definition key to `input_schema`.[3]
-*   **Naming Constraints:** Specific constraints exist, particularly for Gemini and Claude.[3, 10]
-*   **Advanced Features:** Each API might have unique features like parallel calls (Gemini [11]), predefined tools (Anthropic [16, 17]), or specific modes for forcing tool use (All have variations like `AUTO`, `ANY`, `NONE` or similar [2, 3, 10]).
+*   **Parameter Standard:** All effectively use JSON Schema (or the closely related OpenAPI 3.0 Schema for Gemini) to define parameters. This shared foundation is key to enabling a unified approach.
+*   **Description Emphasis:** While important for all, Anthropic places the strongest emphasis on highly detailed descriptions for reliable tool use.
+*   **Structural Wrapping:** The main difference lies in how the core information (`name`, `description`, `parameters`) is nested. OpenAI wraps it inside `{"type": "function", "function": {...}}`. Gemini uses a flat `FunctionDeclaration` object. Anthropic uses a flat tool object but renames the parameter definition key to `input_schema`.
+*   **Naming Constraints:** Specific constraints exist, particularly for Gemini and Claude.
+*   **Advanced Features:** Each API might have unique features like parallel calls (Gemini), predefined tools (Anthropic), or specific modes for forcing tool use (All have variations like `AUTO`, `ANY`, `NONE` or similar).
 
 ## 3. Proposed Unified Base Schema
 
@@ -153,22 +155,22 @@ unified_schema = {
 ```
 
 *   **`name`**: (String) The unique identifier for the function. Strategies for generating this name from nested Python structures are discussed in Section 5.
-*   **`description`**: (String) The detailed explanation for the LLM. This should be comprehensive, incorporating best practices from all platforms, especially the detail requested by Anthropic.[3]
-*   **`parameters`**: (Dictionary/Object) A dictionary directly representing the **JSON Schema** object that defines the function's input parameters. This structure is chosen for its direct compatibility or easy adaptability across all three APIs.[3, 4, 10]
+*   **`description`**: (String) The detailed explanation for the LLM. This should be comprehensive, incorporating best practices from all platforms, especially the detail requested by Anthropic.
+*   **`parameters`**: (Dictionary/Object) A dictionary directly representing the **JSON Schema** object that defines the function's input parameters. This structure is chosen for its direct compatibility or easy adaptability across all three APIs.
 
 ### 3.3. Standardizing Parameter Definitions (JSON Schema)
 
-The value associated with the `parameters` key in the unified schema must adhere to standard JSON Schema conventions (compatible with OpenAPI 3.0 specification for broader applicability [10]).
+The value associated with the `parameters` key in the unified schema must adhere to standard JSON Schema conventions (compatible with OpenAPI 3.0 specification for broader applicability).
 
 Key components within the `parameters` object:
 
 *   **`type`**: Must always be `"object"` at the top level, indicating the function expects a collection of named arguments.
 *   **`properties`**: An object where each key is a parameter name (e.g., `"location"`, `"user_id"`) and the corresponding value is a JSON Schema object defining that specific parameter.
 *   **Parameter Schema Object**: Each object within `properties` must define:
-    *   **`type`**: The data type (e.g., `"string"`, `"number"`, `"integer"`, `"boolean"`, `"array"`, `"object"`). Use standard JSON Schema types.[3, 4, 10]
-    *   **`description`**: A clear explanation of the parameter's purpose. This is crucial for the LLM to generate correct arguments.[3, 4, 10]
+    *   **`type`**: The data type (e.g., `"string"`, `"number"`, `"integer"`, `"boolean"`, `"array"`, `"object"`). Use standard JSON Schema types.
+    *   **`description`**: A clear explanation of the parameter's purpose. This is crucial for the LLM to generate correct arguments.
     *   *(Optional but common)*: `enum` (an array of allowed string/number values), `items` (a schema object defining the elements if `type` is `"array"`), nested `properties` and `required` (if `type` is `"object"`).
-*   **`required`**: An array of strings listing the names of parameters (defined in `properties`) that are mandatory. If a parameter is not listed here, the LLM may omit it.[3, 4, 10]
+*   **`required`**: An array of strings listing the names of parameters (defined in `properties`) that are mandatory. If a parameter is not listed here, the LLM may omit it.
 
 **Conceptual Python to JSON Schema Type Mapping:**
 
@@ -183,7 +185,7 @@ Key components within the `parameters` object:
 | `Optional` | (Same as T) | Typically implies the parameter is *not* listed in the `required` array. |
 | `Enum` (from `enum`) | `"string"` / `"integer"` | Use with JSON Schema `enum` field listing the possible values. |
 
-This consistent use of JSON Schema for parameter definition forms the bedrock of the unified approach, as all target APIs understand and expect this format, even if wrapped differently.[3, 4, 10]
+This consistent use of JSON Schema for parameter definition forms the bedrock of the unified approach, as all target APIs understand and expect this format, even if wrapped differently.
 
 ## 4. Adapting the Unified Schema for Each API
 
@@ -196,7 +198,7 @@ The core task is to take the `unified_schema` dictionary (defined in Section 3.2
 ### 4.2. Transformation for OpenAI
 
 *   **Input:** `unified_schema` dictionary.
-*   **Output:** OpenAI `tool` dictionary format.[4]
+*   **Output:** OpenAI `tool` dictionary format.
 *   **Steps:**
     1.  Create the base structure: `output = {"type": "function", "function": {}}`.
     2.  Copy `unified_schema["name"]` to `output["function"]["name"]`.
@@ -220,46 +222,46 @@ The core task is to take the `unified_schema` dictionary (defined in Section 3.2
 ### 4.3. Transformation for Google Gemini
 
 *   **Input:** `unified_schema` dictionary.
-*   **Output:** Gemini `FunctionDeclaration` dictionary format.[10]
+*   **Output:** Gemini `FunctionDeclaration` dictionary format.
 *   **Steps:**
     1.  Create the base structure: `output = {}` (representing the `FunctionDeclaration` object).
     2.  Copy `unified_schema["name"]` to `output["name"]`.
     3.  Copy `unified_schema["description"]` to `output["description"]`.
-    4.  Perform a direct copy of the entire `unified_schema["parameters"]` dictionary to `output["parameters"]`. While Gemini's documentation refers to OpenAPI 3.0 Schema [10], standard JSON Schema as defined in the unified schema is generally compatible for common use cases. For advanced OpenAPI features (like discriminators, XML objects), specific adjustments might be needed, but are outside the scope of typical function parameters. Ensure types match expected values (e.g., potentially converting `"object"` to `"OBJECT"` if strict adherence to documentation examples is required, though SDKs might handle this [10, 13]).
+    4.  Perform a direct copy of the entire `unified_schema["parameters"]` dictionary to `output["parameters"]`. While Gemini's documentation refers to OpenAPI 3.0 Schema [10], standard JSON Schema as defined in the unified schema is generally compatible for common use cases. For advanced OpenAPI features (like discriminators, XML objects), specific adjustments might be needed, but are outside the scope of typical function parameters. Ensure types match expected values (e.g., potentially converting `"object"` to `"OBJECT"` if strict adherence to documentation examples is required, though SDKs might handle this).
 
-*   **Conceptual Python Implementation:**
-    ```python
-    def transform_for_gemini(unified_schema: dict) -> dict:
-        """Converts the unified schema to the Google Gemini FunctionDeclaration format."""
-        # Note: Type casing (e.g., "object" vs "OBJECT") might need adjustment
-        # depending on direct API usage vs. SDK handling. Assuming direct compatibility here.
-        return {
-            "name": unified_schema["name"],
-            "description": unified_schema["description"],
-            "parameters": unified_schema["parameters"] # Direct copy, assuming compatibility
-        }
-    ```
+**Conceptual Python Implementation:**
+```python
+def transform_for_gemini(unified_schema: dict) -> dict:
+  """Converts the unified schema to the Google Gemini FunctionDeclaration format."""
+  # Note: Type casing (e.g., "object" vs "OBJECT") might need adjustment
+  # depending on direct API usage vs. SDK handling. Assuming direct compatibility here.
+  return {
+      "name": unified_schema["name"],
+      "description": unified_schema["description"],
+      "parameters": unified_schema["parameters"] # Direct copy, assuming compatibility
+  }
+```
 
 ### 4.4. Transformation for Anthropic Claude
 
 *   **Input:** `unified_schema` dictionary.
-*   **Output:** Claude `tool` dictionary format.[3]
+*   **Output:** Claude `tool` dictionary format.
 *   **Steps:**
     1.  Create the base structure: `output = {}` (representing the tool object).
     2.  Copy `unified_schema["name"]` to `output["name"]`.
     3.  Copy `unified_schema["description"]` to `output["description"]`.
     4.  Perform a direct copy of the entire `unified_schema["parameters"]` dictionary to `output["input_schema"]`. Note the key name change from `"parameters"` to `"input_schema"`.
 
-*   **Conceptual Python Implementation:**
-    ```python
-    def transform_for_claude(unified_schema: dict) -> dict:
-        """Converts the unified schema to the Anthropic Claude tool format."""
-        return {
-            "name": unified_schema["name"],
-            "description": unified_schema["description"],
-            "input_schema": unified_schema["parameters"] # Key rename
-        }
-    ```
+**Conceptual Python Implementation:**
+```python
+def transform_for_claude(unified_schema: dict) -> dict:
+    """Converts the unified schema to the Anthropic Claude tool format."""
+    return {
+        "name": unified_schema["name"],
+        "description": unified_schema["description"],
+        "input_schema": unified_schema["parameters"] # Key rename
+    }
+```
 
 ### 4.5. Transformation Summary
 
@@ -277,7 +279,7 @@ This table provides a clear, actionable mapping guide for implementing the trans
 
 ## 5. Handling Nested Python Structures: Naming Conventions
 
-The user query specifies a Python library structure involving classes, modules, and sub-modules containing functions. However, LLM tool-calling APIs require a single, flat string `name` to identify each function or tool.[3, 4, 10] This necessitates a convention for mapping the hierarchical Python structure (e.g., `my_library.utils.networking.send_request` or `my_library.data.Processor.process_item`) into a unique, flat name suitable for the APIs.
+The user query specifies a Python library structure involving classes, modules, and sub-modules containing functions. However, LLM tool-calling APIs require a single, flat string `name` to identify each function or tool. This necessitates a convention for mapping the hierarchical Python structure (e.g., `my_library.utils.networking.send_request` or `my_library.data.Processor.process_item`) into a unique, flat name suitable for the APIs.
 
 ### 5.1. The Challenge of Hierarchical Names
 
@@ -285,7 +287,7 @@ The core problem is bridging the gap between Python's namespacing (modules, clas
 
 ### 5.2. Recommended Naming Conventions
 
-A common and effective approach is to use a consistent delimiter to concatenate the parts of the Python path into a single string. Underscores (`_`) are a widely accepted choice as they are typically allowed in identifiers across many systems and are explicitly permitted in Claude's and Gemini's naming constraints.[3, 10]
+A common and effective approach is to use a consistent delimiter to concatenate the parts of the Python path into a single string. Underscores (`_`) are a widely accepted choice as they are typically allowed in identifiers across many systems and are explicitly permitted in Claude's and Gemini's naming constraints.
 
 *   **Recommended Convention (Underscore Delimiter):**
     *   Format: `module_submodule_..._function` or `module_..._class_method`.
@@ -299,11 +301,11 @@ A common and effective approach is to use a consistent delimiter to concatenate 
 *   **Consistency:** Choose one convention and apply it rigorously across the entire library for all exposed functions.
 *   **Uniqueness:** Ensure the generated names are unique within the set of tools provided to the LLM in a single API call. The inclusion of the module/class path generally guarantees this.
 *   **Readability:** While primarily for machine use, a readable convention aids debugging.
-*   **API Constraints:** The final generated name *must* comply with the naming rules of all target APIs. The underscore convention generally satisfies the known constraints (`^[a-zA-Z0-9_-]{1,64}$` for Claude [3]; `a-z, A-Z, 0-9, _,., -`, max 64 for Gemini [10]). Avoid characters not explicitly allowed.
+*   **API Constraints:** The final generated name *must* comply with the naming rules of all target APIs. The underscore convention generally satisfies the known constraints (`^[a-zA-Z0-9_-]{1,64}$` for Claude; `a-z, A-Z, 0-9, _,., -`, max 64 for Gemini). Avoid characters not explicitly allowed.
 
 ### 5.3. Implementation Considerations
 
-*   **Automated Name Generation:** This process should ideally be automated. Python's introspection capabilities can be used during the schema generation phase. For a function `func`, its module path (`func.__module__`) and name (`func.__name__`) can be retrieved. For a method `meth` within a class `Cls`, `meth.__qualname__` often provides a string like `Cls.meth`, which can be combined with the module path. Libraries used for parsing docstrings or Pydantic models might also offer hooks for custom name generation.[6]
+*   **Automated Name Generation:** This process should ideally be automated. Python's introspection capabilities can be used during the schema generation phase. For a function `func`, its module path (`func.__module__`) and name (`func.__name__`) can be retrieved. For a method `meth` within a class `Cls`, `meth.__qualname__` often provides a string like `Cls.meth`, which can be combined with the module path. Libraries used for parsing docstrings or Pydantic models might also offer hooks for custom name generation.
 *   **Client-Side Mapping:** Crucially, the Python application receiving a function call request from the LLM (which will contain the generated flat name like `"utils_networking_send_request"`) needs a mechanism to map this name back to the actual callable Python object (`my_library.utils.networking.send_request`). A dictionary mapping the generated names to the function/method references is a standard way to implement this dispatch logic.
 
 Adopting a clear and automated naming convention is essential for managing complexity and ensuring the LLM can correctly request, and the library can correctly execute, functions from a nested structure.
@@ -382,7 +384,7 @@ send_email_unified_schema = {
 }
 ```
 
-*Note:* Tools exist that can help automate this generation process by parsing Python code, docstrings (e.g., Google, NumPy, or reStructuredText style), and type annotations. Libraries like Pydantic, or specialized tools like those mentioned for OpenAI [6] or Anthropic [18], can significantly streamline this step.
+*Note:* Tools exist that can help automate this generation process by parsing Python code, docstrings (e.g., Google, NumPy, or reStructuredText style), and type annotations. Libraries like Pydantic, or specialized tools like those mentioned for OpenAI or Anthropic, can significantly streamline this step.
 
 ### 6.3. Transformed Schemas for APIs
 
@@ -455,17 +457,17 @@ By establishing a central `unified_schema` format in Python (Section 3) that cap
 
 ### 7.1. Key Implementation Recommendations
 
-1.  **Prioritize Detailed Descriptions:** Craft clear, comprehensive descriptions for each function in the unified schema. Explain the purpose, parameters, return values, and any crucial caveats. This benefits all models but is particularly vital for Anthropic Claude's performance.[3, 15]
-2.  **Automate Schema Generation:** Leverage Python's introspection capabilities (type hints, docstrings) and potentially external libraries (e.g., Pydantic, docstring parsers [6, 13, 18]) to automatically generate the `unified_schema` dictionaries from the Python source code. This reduces manual effort and ensures consistency.
+1.  **Prioritize Detailed Descriptions:** Craft clear, comprehensive descriptions for each function in the unified schema. Explain the purpose, parameters, return values, and any crucial caveats. This benefits all models but is particularly vital for Anthropic Claude's performance.
+2.  **Automate Schema Generation:** Leverage Python's introspection capabilities (type hints, docstrings) and potentially external libraries (e.g., Pydantic, docstring parsers) to automatically generate the `unified_schema` dictionaries from the Python source code. This reduces manual effort and ensures consistency.
 3.  **Implement Robust Naming & Mapping:** Choose a consistent naming convention (e.g., underscore-separated paths) for the `name` field in the unified schema. Ensure the client-side application reliably maps these generated names back to the correct Python functions/methods for execution.
-4.  **Standardize on JSON Schema:** Strictly adhere to standard JSON Schema definitions for the `parameters` object within the unified schema. Use basic types (`string`, `number`, `integer`, `boolean`, `array`, `object`) and common keywords (`description`, `enum`, `items`, `properties`, `required`) that are well-supported across all platforms.[3, 4, 10]
+4.  **Standardize on JSON Schema:** Strictly adhere to standard JSON Schema definitions for the `parameters` object within the unified schema. Use basic types (`string`, `number`, `integer`, `boolean`, `array`, `object`) and common keywords (`description`, `enum`, `items`, `properties`, `required`) that are well-supported across all platforms.
 5.  **Develop Transformation Functions:** Implement simple functions (similar to the conceptual examples in Section 4) to perform the conversion from the `unified_schema` to the specific format required by each target API (OpenAI, Gemini, Claude).
-6.  **Handle API-Specific Behaviors:** Be aware of platform-specific features or behaviors, such as Gemini's potential for parallel function calls [2, 11], and ensure the application logic can handle them appropriately if supporting that platform.
+6.  **Handle API-Specific Behaviors:** Be aware of platform-specific features or behaviors, such as Gemini's potential for parallel function calls, and ensure the application logic can handle them appropriately if supporting that platform.
 7.  **Test Thoroughly:** Validate the generated schemas and the end-to-end function calling process with each target API. Pay attention to how each model interprets descriptions and handles different parameter types or edge cases. Test error handling for both API interactions and local function execution.
 
 ### 7.2. Future Considerations
 
-LLM APIs and their function/tool calling capabilities are continuously evolving.[5] Regularly review the documentation for OpenAI, Google Gemini, and Anthropic Claude to ensure the unified schema approach and transformation logic remain compatible with the latest specifications. Additionally, explore higher-level frameworks or libraries (e.g., LangChain [14], Semantic Kernel [19], Anthropic Tools [18]) that may offer abstractions for multi-API tool management, although a foundational understanding of the underlying schema requirements remains valuable for effective implementation and debugging.
+LLM APIs and their function/tool calling capabilities are continuously evolving. Regularly review the documentation for OpenAI, Google Gemini, and Anthropic Claude to ensure the unified schema approach and transformation logic remain compatible with the latest specifications. Additionally, explore higher-level frameworks or libraries (e.g., LangChain, Semantic Kernel, Anthropic Tools) that may offer abstractions for multi-API tool management, although a foundational understanding of the underlying schema requirements remains valuable for effective implementation and debugging.
 
 By adopting the proposed unified schema and transformation approach, developers can create more maintainable and scalable Python libraries that effectively leverage the tool-calling capabilities of major LLM platforms.
 
