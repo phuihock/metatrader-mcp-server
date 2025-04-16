@@ -32,7 +32,11 @@ dependencies = [
 
 [tool.setuptools.packages.find]
 where = ["src"]
+include = ["MetaTraderMCPServer*", "metatrader_client*"]
 
 [project.urls]
 "Homepage" = "https://github.com/ariadng/metatrader-mcp-server"
 "Bug Tracker" = "https://github.com/ariadng/metatrader-mcp-server/issues"
+
+[project.optional-dependencies]
+client = []

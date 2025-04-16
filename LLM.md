@@ -34,7 +34,7 @@ Implements a MetaTrader 5 (MT5) Multi-Component Platform (MCP) server and client
 
 ## Usage Example
 ```python
-from MetaTraderMCPServer.client.orders import MT5Orders
+from metatrader_client.orders import MT5Orders
 orders = MT5Orders(...)
 orders.place_market_order(...)
 ```

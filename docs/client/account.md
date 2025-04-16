@@ -7,8 +7,8 @@ The `account` module provides comprehensive functionality for interacting with M
 ## Quick Start Guide 🚀
 
 ```python
-from MetaTraderMCPServer.client.connection import MT5Connection
-from MetaTraderMCPServer.client.account import MT5Account
+from metatrader_client.connection import MT5Connection
+from metatrader_client.account import MT5Account
 
 # Set up configuration
 config = {

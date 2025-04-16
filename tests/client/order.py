@@ -1,7 +1,7 @@
 import os
 import pytest
 from dotenv import load_dotenv
-from MetaTraderMCPServer.client import MT5Client
+from metatrader_client import MT5Client
 import platform
 import time
 from datetime import datetime

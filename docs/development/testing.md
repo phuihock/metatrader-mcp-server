@@ -7,7 +7,7 @@ Welcome! This guide will help you write clear, robust, and maintainable tests fo
 ## 📁 Project & Test Structure
 
 - **Source code:**  
-  `src/MetaTraderMCPServer/client/`
+  `src/metatrader_client/`
 - **Tests:**  
   `tests/client/`
 - **Test reports:**  
@@ -30,7 +30,7 @@ Each order-related function (e.g., place, modify, close) is tested in its own lo
 import os
 import pytest
 from dotenv import load_dotenv
-from MetaTraderMCPServer.client import MT5Client
+from metatrader_client import MT5Client
 from datetime import datetime
 
 SYMBOL = "EURUSD"

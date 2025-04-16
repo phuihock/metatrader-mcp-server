@@ -7,8 +7,8 @@ The `history` module provides comprehensive functionality for retrieving and ana
 ## Quick Start Guide 🚀
 
 ```python
-from MetaTraderMCPServer.client.connection import MT5Connection
-from MetaTraderMCPServer.client.history import MT5History
+from metatrader_client.connection import MT5Connection
+from metatrader_client.history import MT5History
 from datetime import datetime, timedelta
 
 # Set up configuration

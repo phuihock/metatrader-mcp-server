@@ -7,7 +7,7 @@ The `market` module provides comprehensive functionality for accessing market da
 ## Quick Start Guide 🚀
 
 ```python
-from MetaTraderMCPServer.client.client import MT5Client
+from metatrader_client import MT5Client
 
 # Set up configuration
 config = {
@@ -225,7 +225,7 @@ The method is flexible with date parameters:
 The market module uses the `Timeframe` class from the `types` module to handle timeframe conversions. This allows you to use human-readable timeframe strings (like "M1", "H1") instead of MetaTrader's numeric constants.
 
 ```python
-from MetaTraderMCPServer.client.types import Timeframe
+from metatrader_client.types import Timeframe
 
 # Convert timeframe string to MT5 constant
 mt5_timeframe = Timeframe["H1"]  # Gets the MT5 constant for 1-hour timeframe
@@ -255,7 +255,7 @@ print(stats)
 The market module provides specific exception types for different error scenarios:
 
 ```python
-from MetaTraderMCPServer.client.exceptions import (
+from metatrader_client.exceptions import (
     SymbolNotFoundError, InvalidTimeframeError, MarketDataError
 )
 
@@ -286,7 +286,7 @@ except Exception as e:
 ```python
 import pandas as pd
 import matplotlib.pyplot as plt
-from MetaTraderMCPServer.client.client import MT5Client
+from metatrader_client import MT5Client
 
 # Connect to MT5
 client = MT5Client(config)

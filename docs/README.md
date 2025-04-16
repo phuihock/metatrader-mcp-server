@@ -31,7 +31,7 @@ The server module implements the Model Context Protocol interface:
 ## Quick Start Guide 🚀
 
 ```python
-from MetaTraderMCPServer.client.connection import MT5Connection
+from metatrader_client.connection import MT5Connection
 
 # Set up configuration
 config = {

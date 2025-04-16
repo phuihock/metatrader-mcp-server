@@ -7,7 +7,7 @@ The `connection` module is the foundation of the MetaTrader MCP Server client in
 ## Quick Start Guide 🚀
 
 ```python
-from MetaTraderMCPServer.client.connection import MT5Connection
+from metatrader_client.connection import MT5Connection
 
 # Set up configuration
 config = {
