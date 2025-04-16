@@ -35,7 +35,7 @@ def setup_logging():
     )
     
     # 1. Create console handler
-    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler = logging.StreamHandler(sys.stderr)
     console_handler.setLevel(settings.LOG_LEVEL)
     console_handler.setFormatter(formatter)
     root_logger.addHandler(console_handler)

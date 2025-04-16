@@ -1,7 +1,7 @@
 # MCP Server Project Structure
 
 ```
-/src/mcp/
+/src/mcp_server/
 ├── __init__.py
 ├── main.py                     # FastMCP server instance & main entry point
 ├── core/                       # Core config, security, logging (as needed)

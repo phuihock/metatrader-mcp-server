@@ -7,14 +7,7 @@ import threading
 from typing import Optional, Dict, Any
 from mcp_server.core.config import settings
 from mcp_server.core.logging_config import mt5_logger
-
-# Import conditionally to handle environments where MT5 package isn't installed
-try:
-    from metatrader_client.client import MT5Client
-    MT5_AVAILABLE = True
-except ImportError:
-    MT5_AVAILABLE = False
-    mt5_logger.warning("MetaTrader client not available - import failed")
+from metatrader_client.client import MT5Client
 
 # Global MT5Client instance
 mt5_client: Optional[Any] = None
@@ -29,10 +22,6 @@ def initialize_mt5_client() -> bool:
         bool: True if successfully connected, False otherwise
     """
     global mt5_client, _last_connection_attempt
-    
-    if not MT5_AVAILABLE:
-        mt5_logger.error("MT5 client not available - cannot initialize")
-        return False
     
     with _connection_lock:
         # Skip if we're already connected
