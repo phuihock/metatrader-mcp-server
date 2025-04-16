@@ -4,20 +4,24 @@ A step-by-step guide to implementing the MetaTrader MCP Server.
 
 ---
 
-## Phase 1: Foundation & Core Components 🏗️
+## Phase 1: Foundation, HTTP Server & Core Components 🏗️
+
+> **Rationale:** To enable incremental, test-driven development, we start by implementing basic HTTP functionality. This allows us to verify the server is running and test each new feature as it is added.
 
 1. **Set up project structure**
    - Create all necessary directory structures and empty Python files
    - Add `__init__.py` files with appropriate imports
 
-2. **Core configuration**
+2. **Basic HTTP server setup**
+   - Implement a minimal FastAPI app in `main.py`
+   - Add a simple health check endpoint (e.g., `/ping` or `/health`)
+   - Ensure the server can be started and tested immediately
+
+3. **Core configuration**
    - Implement `core/config.py` with environment variables and settings
    - Create configuration for development and production environments
    - Set up logging in `core/logging_config.py`
 
-3. **Basic security layer**
-   - Implement authentication in `core/security.py`
-   - Set up API key validation
 
 ---
 
