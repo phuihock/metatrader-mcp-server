@@ -34,33 +34,40 @@ This guide is designed for LLMs and developers to systematically create robust, 
   5. Clean up or reset any changed state.
 - This step-by-step scenario will serve as your blueprint for implementing the actual test functions.
 
-## 4. Prepare Test Data and Environment
+## 5. Prepare Test Data and Environment
 - Define constants and test data at the top of the test file.
-- Use environment variables or configuration files for sensitive data.
-- Create pytest fixtures for setup and teardown of resources.
+- Use environment variables or configuration files for sensitive data (e.g., `.env` with `LOGIN`, `PASSWORD`, `SERVER`).
+- For integration tests with real systems (e.g., MetaTrader 5), create a pytest fixture that:
+  - Loads credentials from environment/config.
+  - Connects to the real service before tests and disconnects after.
+  - Skips tests gracefully if credentials are missing.
+- Print friendly connection/disconnection messages (emojis encouraged!).
+- Avoid mocks for real integration tests—test actual system behavior.
 
-## 5. Write Test Functions
+## 6. Write Test Functions
 - Write one test function per scenario, using descriptive names.
 - Use fixtures to manage setup/teardown.
 - Add friendly, informative print/log statements (emojis encouraged!).
 - Use clear, assertive checks for all expected outcomes.
-- Handle and assert exceptions where appropriate.
+- For live/integration tests, assert types and value ranges, not just exact values (since live data changes).
+- Print actual returned data for easier debugging and validation.
+- Handle and assert exceptions where appropriate. If a test fails, print the actual response for troubleshooting.
 
-## 6. Ensure Isolation and Repeatability
+## 7. Ensure Isolation and Repeatability
 - Avoid shared state between tests.
 - Clean up any resources (files, connections) after each test.
 - Use mocking for external dependencies if needed.
 
-## 7. Follow Documentation and Best Practices
+## 8. Follow Documentation and Best Practices
 - Refer to your project’s testing documentation for any specific requirements (e.g., `docs/development/testing.md`).
 - Ensure your tests are readable, maintainable, and minimal.
 
-## 8. Run and Validate Tests
+## 9. Run and Validate Tests
 - Run the test suite locally and ensure all tests pass.
 - Fix any failures or flaky tests.
 - Review test output for clarity and usefulness.
 
-## 9. Document and Review
+## 10. Document and Review
 - Add docstrings or comments if a test’s purpose isn’t obvious.
 - Ask for code review or run automated checks if your workflow supports it.
 

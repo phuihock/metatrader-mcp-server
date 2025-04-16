@@ -20,16 +20,23 @@ def get_candles_by_date(
         raise InvalidTimeframeError(f"Invalid timeframe: '{timeframe}'")
     from_datetime = None
     to_datetime = None
+    def parse_date(date_str, is_to_date=False):
+        for fmt in ("%Y-%m-%d %H:%M", "%Y-%m-%d"):
+            try:
+                dt = datetime.strptime(date_str, fmt)
+                if fmt == "%Y-%m-%d":
+                    if is_to_date:
+                        dt = dt.replace(hour=23, minute=59)
+                    else:
+                        dt = dt.replace(hour=0, minute=0)
+                return dt.replace(tzinfo=timezone.utc)
+            except ValueError:
+                continue
+        raise ValueError(f"Invalid date format: {date_str}. Expected 'yyyy-MM-dd' or 'yyyy-MM-dd HH:mm'")
     if from_date:
-        try:
-            from_datetime = datetime.strptime(from_date, "%Y-%m-%d %H:%M").replace(tzinfo=timezone.utc)
-        except ValueError:
-            raise ValueError(f"Invalid from_date format: {from_date}. Expected format: 'yyyy-MM-dd HH:mm'")
+        from_datetime = parse_date(from_date)
     if to_date:
-        try:
-            to_datetime = datetime.strptime(to_date, "%Y-%m-%d %H:%M").replace(tzinfo=timezone.utc)
-        except ValueError:
-            raise ValueError(f"Invalid to_date format: {to_date}. Expected format: 'yyyy-MM-dd HH:mm'")
+        to_datetime = parse_date(to_date, is_to_date=True)
     if from_datetime and to_datetime and from_datetime > to_datetime:
         from_datetime, to_datetime = to_datetime, from_datetime
     candles = None
