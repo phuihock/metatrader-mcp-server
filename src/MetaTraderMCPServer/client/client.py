@@ -3,15 +3,13 @@ MetaTrader 5 client main module.
 
 This module provides a unified interface for all MT5 operations.
 """
-from typing import Dict, Any, List, Optional, Union, Tuple
-from datetime import datetime
+from typing import Dict, Any, Optional, Tuple
 
-from .connection import MT5Connection
-from .account import MT5Account
-from .market import MT5Market
-from .orders import MT5Orders
-from .history import MT5History
-from .types import OrderType
+from .client_connection import MT5Connection
+from .client_order import MT5Order
+from .client_account import MT5Account
+from .client_market import MT5Market
+from .client_history import MT5History
 
 class MT5Client:
     """
@@ -34,7 +32,7 @@ class MT5Client:
         self._connection = MT5Connection(config)
         self.account = MT5Account(self._connection)
         self.market = MT5Market(self._connection)
-        self.orders = MT5Orders(self._connection)
+        self.order = MT5Order(self._connection)
         self.history = MT5History(self._connection)
     
     # Connection methods

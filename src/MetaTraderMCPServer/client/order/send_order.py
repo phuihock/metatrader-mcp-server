@@ -11,7 +11,7 @@ import pandas as pd
 from typing import Optional, Union, Dict
 from datetime import datetime
 
-from ..market import MT5Market
+from ..client_market import MT5Market
 from ..types import (
 	TradeRequest,
 	TradeRequestActions,

@@ -37,25 +37,25 @@ def test_full_order_functionality(mt5_client):
     summary = []
     # 1. Get all positions
     print("\n📋 Getting all open positions...")
-    all_positions = mt5_client.orders.get_all_positions()
+    all_positions = mt5_client.order.get_all_positions()
     print(f"📈 All positions:\n{all_positions}")
     summary.append("📋 get_all_positions: ✅")
 
     # 2. Get positions by symbol
     print("\n🔎 Getting positions by symbol...")
-    positions_by_symbol = mt5_client.orders.get_positions_by_symbol(SYMBOL)
+    positions_by_symbol = mt5_client.order.get_positions_by_symbol(SYMBOL)
     print(f"🔎 Positions for {SYMBOL}:\n{positions_by_symbol}")
     summary.append("🔎 get_positions_by_symbol: ✅")
 
     # 3. Get positions by currency (assuming USD)
     print("\n💵 Getting positions by currency...")
-    positions_by_currency = mt5_client.orders.get_positions_by_currency("USD")
+    positions_by_currency = mt5_client.order.get_positions_by_currency("USD")
     print(f"💵 Positions for USD:\n{positions_by_currency}")
     summary.append("💵 get_positions_by_currency: ✅")
 
     # 4. Place a market order
     print("\n🚀 Placing a market BUY order...")
-    market_order = mt5_client.orders.place_market_order(
+    market_order = mt5_client.order.place_market_order(
         type="BUY",
         symbol=SYMBOL,
         volume=VOLUME
@@ -67,13 +67,13 @@ def test_full_order_functionality(mt5_client):
     # 5. Get positions by id
     print("\n🆔 Getting position by ID...")
     pos_id = market_order["data"].order if market_order["data"] else None
-    position_by_id = mt5_client.orders.get_positions_by_id(pos_id)
+    position_by_id = mt5_client.order.get_positions_by_id(pos_id)
     print(f"🆔 Position for ID {pos_id}:\n{position_by_id}")
     summary.append("🆔 get_positions_by_id: ✅")
 
     # 6. Place a pending order
     print("\n⏳ Placing a pending BUY order...")
-    pending_order = mt5_client.orders.place_pending_order(
+    pending_order = mt5_client.order.place_pending_order(
         type="BUY",
         symbol=SYMBOL,
         volume=VOLUME,
@@ -85,32 +85,32 @@ def test_full_order_functionality(mt5_client):
 
     # 7. Get pending orders (all)
     print("\n🕒 Getting all pending orders...")
-    all_pending_orders = mt5_client.orders.get_all_pending_orders()
+    all_pending_orders = mt5_client.order.get_all_pending_orders()
     print(f"🕒 All pending orders:\n{all_pending_orders}")
     summary.append("🕒 get_all_pending_orders: ✅")
 
     # 8. Get pending orders by symbol
     print("\n🔎 Getting pending orders by symbol...")
-    pending_by_symbol = mt5_client.orders.get_pending_orders_by_symbol(SYMBOL)
+    pending_by_symbol = mt5_client.order.get_pending_orders_by_symbol(SYMBOL)
     print(f"🔎 Pending orders for {SYMBOL}:\n{pending_by_symbol}")
     summary.append("🔎 get_pending_orders_by_symbol: ✅")
 
     # 9. Get pending orders by currency
     print("\n💵 Getting pending orders by currency...")
-    pending_by_currency = mt5_client.orders.get_pending_orders_by_currency("USD")
+    pending_by_currency = mt5_client.order.get_pending_orders_by_currency("USD")
     print(f"💵 Pending orders for USD:\n{pending_by_currency}")
     summary.append("💵 get_pending_orders_by_currency: ✅")
 
     # 10. Get pending orders by id
     print("\n🆔 Getting pending order by ID...")
     pend_id = pending_order["data"].order if pending_order["data"] else None
-    pending_by_id = mt5_client.orders.get_pending_orders_by_id(pend_id)
+    pending_by_id = mt5_client.order.get_pending_orders_by_id(pend_id)
     print(f"🆔 Pending order for ID {pend_id}:\n{pending_by_id}")
     summary.append("🆔 get_pending_orders_by_id: ✅")
 
     # 11. Modify the open position (if supported)
     print("\n✏️ Modifying the open position SL/TP...")
-    modified_position = mt5_client.orders.modify_position(
+    modified_position = mt5_client.order.modify_position(
         id=pos_id,
         stop_loss=1.1000,   # Example SL value, adjust as needed
         take_profit=1.3000  # Example TP value, adjust as needed
@@ -121,7 +121,7 @@ def test_full_order_functionality(mt5_client):
     # 12. Modify the pending order
     print("\n✏️ Modifying the pending order price...")
     new_price = PENDING_PRICE - 0.0005
-    modified_pending = mt5_client.orders.modify_pending_order(
+    modified_pending = mt5_client.order.modify_pending_order(
         id=pend_id,
         price=new_price
     )
@@ -130,49 +130,49 @@ def test_full_order_functionality(mt5_client):
 
     # 13. Close all profitable positions
     print("\n💰 Closing all profitable positions...")
-    close_profitable = mt5_client.orders.close_all_profittable_positions()
+    close_profitable = mt5_client.order.close_all_profittable_positions()
     print(f"💰 Closed profitable positions: {close_profitable}")
     summary.append("💰 close_all_profittable_positions: ✅")
 
     # 14. Close all losing positions
     print("\n🔻 Closing all losing positions...")
-    close_losing = mt5_client.orders.close_all_losing_positions()
+    close_losing = mt5_client.order.close_all_losing_positions()
     print(f"🔻 Closed losing positions: {close_losing}")
     summary.append("🔻 close_all_losing_positions: ✅")
 
     # 15. Close all positions by symbol
     print(f"\n🔒 Closing all positions for {SYMBOL}...")
-    close_by_symbol = mt5_client.orders.close_all_positions_by_symbol(SYMBOL)
+    close_by_symbol = mt5_client.order.close_all_positions_by_symbol(SYMBOL)
     print(f"🔒 Closed positions for {SYMBOL}: {close_by_symbol}")
     summary.append("🔒 close_all_positions_by_symbol: ✅")
 
     # 16. Close all positions
     print("\n🛑 Closing all positions...")
-    close_all = mt5_client.orders.close_all_positions()
+    close_all = mt5_client.order.close_all_positions()
     print(f"🛑 Closed all positions: {close_all}")
     summary.append("🛑 close_all_positions: ✅")
 
     # 17. Close the specific market order (if still open)
     print("\n🛑 Closing the market order by ID...")
-    close_market = mt5_client.orders.close_position(id=pos_id)
+    close_market = mt5_client.order.close_position(id=pos_id)
     print(f"🛑 Closed market order: {close_market}")
     summary.append("🛑 close_position: ✅")
 
     # 18. Cancel the pending order by ID
     print("\n🚫 Cancelling the pending order by ID...")
-    cancel_pending = mt5_client.orders.cancel_pending_order(id=pend_id)
+    cancel_pending = mt5_client.order.cancel_pending_order(id=pend_id)
     print(f"🚫 Cancelled pending order: {cancel_pending}")
     summary.append("🚫 cancel_pending_order: ✅")
 
     # 19. Cancel all pending orders by symbol
     print(f"\n🚫 Cancelling all pending orders for {SYMBOL}...")
-    cancel_by_symbol = mt5_client.orders.cancel_pending_orders_by_symbol(SYMBOL)
+    cancel_by_symbol = mt5_client.order.cancel_pending_orders_by_symbol(SYMBOL)
     print(f"🚫 Cancelled pending orders for {SYMBOL}: {cancel_by_symbol}")
     summary.append("🚫 cancel_pending_orders_by_symbol: ✅")
 
     # 20. Cancel all pending orders
     print("\n🚫 Cancelling all pending orders...")
-    cancel_all = mt5_client.orders.cancel_all_pending_orders()
+    cancel_all = mt5_client.order.cancel_all_pending_orders()
     print(f"🚫 Cancelled all pending orders: {cancel_all}")
     summary.append("🚫 cancel_all_pending_orders: ✅")
 

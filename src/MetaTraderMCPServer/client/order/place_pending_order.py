@@ -1,7 +1,7 @@
 from typing import Optional, Union
 from ..types import TradeRequestActions
 from .send_order import send_order
-from ..market import MT5Market
+from ..client_market import MT5Market
 
 def place_pending_order(
 	connection,

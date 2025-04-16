@@ -5,6 +5,8 @@ This package provides a modular interface for communicating with the MetaTrader 
 """
 
 from .client import MT5Client
+from .client_order import MT5Order
+
 from .exceptions import (
     MT5ClientError, 
     ConnectionError, 
@@ -15,7 +17,10 @@ from .exceptions import (
 )
 
 __all__ = [
+    
     "MT5Client",
+    "MT5Order",
+
     "MT5ClientError",
     "ConnectionError",
     "OrderError",

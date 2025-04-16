@@ -6,7 +6,7 @@ import MetaTrader5 as mt5
 import pandas as pd
 from typing import Optional, Union
 
-from ..market import MT5Market
+from ..client_market import MT5Market
 from ..utils import convert_orders_to_dataframe
 from ..types import OrderType, OrderState, OrderFilling, OrderTime
 

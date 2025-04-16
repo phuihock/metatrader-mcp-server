@@ -14,7 +14,7 @@ from .order import close_position, close_all_positions, close_all_positions_by_s
 from .order import cancel_pending_order, cancel_all_pending_orders, cancel_pending_orders_by_symbol
 
 
-class MT5Orders:
+class MT5Order:
     """
     Handles MetaTrader 5 order operations.
     Provides methods to execute, modify, and manage trading orders.
