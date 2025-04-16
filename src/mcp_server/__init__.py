@@ -1,1 +1,0 @@
-"""MetaTrader MCP Server package."""
