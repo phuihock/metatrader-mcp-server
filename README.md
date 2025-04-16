@@ -22,10 +22,28 @@ For developers, see [Developer's Documentation](docs/README.md).
 
 ## Development Instructions
 
+### Creating Virtual Environment
+
+```
+uv venv
+```
+
+Then, you need to enable the environment in the Terminal.
+
+Linux or macOS:
+```
+source .venv/bin/activate
+```
+
+Windows (PowerShell):
+```
+.venv\Scripts\Activate.ps1
+```
+
 ### Installing Package
 
 ```
-pip install -e .
+uv pip install -e .
 ```
 
 ### Building Package
@@ -41,12 +59,10 @@ The build result will be in `dist/` folder.
 To run the test suite and generate a comprehensive Markdown report:
 
 ```bash
-pytest -s tests/client/order.py
+pytest -s tests
 ```
 
 Test reports will be saved in `tests/reports/` with a timestamped filename.
-
-For detailed instructions, see the [Testing Guide](docs/development/testing.md).
 
 ### Publishing to Test PyPI
 
