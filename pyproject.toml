@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "metatrader-mcp-server"
-version = "0.0.7"
+version = "0.1.0"
 authors = [
   { name="Aria Dhanang", email="ariadng@gmail.com" },
 ]
@@ -27,7 +27,8 @@ dependencies = [
   "numpy>=2.2.4",
   "pandas>=2.2.3",
   "tabulate>=0.9.0",
-  "pytest>=8.3.5"
+  "pytest>=8.3.5",
+  "build>=1.2.2.post1"
 ]
 
 [tool.setuptools.packages.find]

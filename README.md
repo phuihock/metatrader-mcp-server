@@ -2,6 +2,10 @@
 
 This is a Model Context Protocol (MCP) server built with Python to enable AI LLMs to trade using MetaTrader platform.
 
+## Updates
+
+- April 16, 2025: We have our first minor version release (0.1.0) 🎉🎉🎉
+
 ## Project Roadmap
 
 For full version checklist, see [version-checklist.md](roadmap/version-checklist.md).
