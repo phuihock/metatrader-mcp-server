@@ -14,7 +14,7 @@ For full version checklist, see [version-checklist.md](roadmap/version-checklist
 |------|--------|------|--------|
 | Connect to MetaTrader 5 terminal | Finished | ✅ | ✅ |
 | Develop MetaTrader client module | Finished | ✅ | ✅ |
-| Develop MCP Server module | - | - | - |
+| Develop MCP Server module | On progress... | - | - |
 | Implement MCP tools | - | - | - |
 | Windsurf integration | - | - | - |
 | Claude Desktop integration | - | - | - |
