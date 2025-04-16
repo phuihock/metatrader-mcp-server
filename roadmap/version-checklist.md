@@ -2,7 +2,7 @@
 
 This document act as to do list to make the project more manageable.
 
-*Last update at April 15, 2025*
+*Last update at April 16, 2025*
 
 ## v0.2.0
 
@@ -30,6 +30,6 @@ Version 0.1 is focused on bridging the official MetaTrader5 Python library. Here
 | **0.0.3** | Market module | ✅ | ✅ |
 | **0.0.4** | History module | ✅ | ✅ |
 | **0.0.6** | Order module | ✅ | ✅ |
-| **0.0.7** | Client package refactor | - | - |
+| **0.0.7** | Client package refactor | ✅ | ✅ |
 
 All version after 0.0.7 and before 0.1.0 are patches and bug fixes.

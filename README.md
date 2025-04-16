@@ -9,7 +9,7 @@ For full version checklist, see [version-checklist.md](roadmap/version-checklist
 | Task | Status | Done | Tested |
 |------|--------|------|--------|
 | Connect to MetaTrader 5 terminal | Finished | ✅ | ✅ |
-| Develop MetaTrader client module | Finished | ✅ | - |
+| Develop MetaTrader client module | Finished | ✅ | ✅ |
 | Develop MCP Server module | - | - | - |
 | Implement MCP tools | - | - | - |
 | Windsurf integration | - | - | - |
