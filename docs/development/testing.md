@@ -9,7 +9,7 @@ Welcome! This guide will help you write clear, robust, and maintainable tests fo
 - **Source code:**  
   `src/metatrader_client/`
 - **Tests:**  
-  `tests/client/`
+  `tests/metatrader_client/`
 - **Test reports:**  
   `tests/reports/`
 
@@ -39,10 +39,20 @@ VOLUME = 0.01
 @pytest.fixture(scope="module")
 def mt5_client():
     load_dotenv()
+    # Check if environment variables are set
+    login = os.getenv("LOGIN")
+    password = os.getenv("PASSWORD")
+    server = os.getenv("SERVER")
+    
+    if not login or not password or not server:
+        print("❌ Error: Missing required environment variables!")
+        print("Please create a .env file with LOGIN, PASSWORD, and SERVER variables.")
+        pytest.skip("Missing environment variables for MetaTrader 5 connection")
+        
     config = {
-        "login": int(os.getenv("LOGIN")),
-        "password": os.getenv("PASSWORD"),
-        "server": os.getenv("SERVER")
+        "login": int(login),
+        "password": password,
+        "server": server
     }
     client = MT5Client(config)
     assert client.connected, "Failed to connect to MetaTrader 5"
@@ -66,7 +76,7 @@ def mt5_client():
 def test_full_order_functionality(mt5_client):
     summary = []
     print("🚀 Placing a market BUY order...")
-    result = mt5_client.orders.place_market_order(type="BUY", symbol=SYMBOL, volume=VOLUME)
+    result = mt5_client.order.place_market_order(type="BUY", symbol=SYMBOL, volume=VOLUME)
     assert not result["error"], f"Order placement failed: {result['message']}"
     summary.append("🚀 place_market_order: ✅")
     # ...more steps...
@@ -86,7 +96,7 @@ except Exception as e:
 
 ### 4. **Reporting**
 - At the end of the test, always write a Markdown report to `tests/reports/`.
-- The filename format is [(yyyy-MM-dd_HH-mm-ss)_client_order.md](cci:1://file:///d:/ARIA/metatrader-mcp-server/tests/client/order.py:12:0-33:31).
+- The filename format is [(yyyy-MM-dd_HH-mm-ss)_client_order.md].
 - The report includes the date, module, test steps, and a final status.
 
 ```python
@@ -152,7 +162,7 @@ def test_full_order_functionality(mt5_client):
 From your project root, run:
 
 ```bash
-pytest -s tests/client/order.py
+pytest -s tests/metatrader_client/order.py
 ```
 
 ---

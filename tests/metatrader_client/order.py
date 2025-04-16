@@ -20,10 +20,21 @@ def mt5_client():
     print("\n🧪 MetaTrader 5 MCP Order System Full Test Suite 🧪\n")
     print("🔑 Loading credentials and connecting to MetaTrader 5...")
     load_dotenv()
+    
+    # Check if environment variables are set
+    login = os.getenv("LOGIN")
+    password = os.getenv("PASSWORD")
+    server = os.getenv("SERVER")
+    
+    if not login or not password or not server:
+        print("❌ Error: Missing required environment variables!")
+        print("Please create a .env file with LOGIN, PASSWORD, and SERVER variables.")
+        pytest.skip("Missing environment variables for MetaTrader 5 connection")
+    
     config = {
-        "login": int(os.getenv("LOGIN")),
-        "password": os.getenv("PASSWORD"),
-        "server": os.getenv("SERVER")
+        "login": int(login),
+        "password": password,
+        "server": server
     }
     client = MT5Client(config)
     client.connect()
