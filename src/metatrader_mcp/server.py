@@ -100,76 +100,80 @@ def get_symbols(ctx: Context, group: str = None) -> list:
 def get_all_positions(ctx: Context) -> list:
 	"""Get all open positions."""
 	client = get_client(ctx)
-	return client.order.get_all_positions()
+	df = client.order.get_all_positions()
+	return df.to_csv() if hasattr(df, 'to_csv') else str(df)
 
 @mcp.tool()
 def get_positions_by_symbol(ctx: Context, symbol: str) -> list:
 	"""Get open positions for a specific symbol."""
 	client = get_client(ctx)
-	return client.order.get_positions_by_symbol(symbol=symbol)
+	df = client.order.get_positions_by_symbol(symbol=symbol)
+	return df.to_csv() if hasattr(df, 'to_csv') else str(df)
 
 @mcp.tool()
 def get_positions_by_id(ctx: Context, ticket: int) -> list:
 	"""Get open positions by ticket ID."""
 	client = get_client(ctx)
-	return client.order.get_positions_by_id(ticket=ticket)
+	df = client.order.get_positions_by_id(ticket=ticket)
+	return df.to_csv() if hasattr(df, 'to_csv') else str(df)
 
 @mcp.tool()
 def get_all_pending_orders(ctx: Context) -> list:
 	"""Get all pending orders."""
 	client = get_client(ctx)
-	return client.order.get_all_pending_orders()
+	df = client.order.get_all_pending_orders()
+	return df.to_csv() if hasattr(df, 'to_csv') else str(df)
 
 @mcp.tool()
 def get_pending_orders_by_symbol(ctx: Context, symbol: str) -> list:
 	"""Get pending orders for a specific symbol."""
 	client = get_client(ctx)
-	return client.order.get_pending_orders_by_symbol(symbol=symbol)
+	df = client.order.get_pending_orders_by_symbol(symbol=symbol)
+	return df.to_csv() if hasattr(df, 'to_csv') else str(df)
 
 @mcp.tool()
 def get_pending_orders_by_id(ctx: Context, ticket: int) -> list:
 	"""Get pending orders by ticket ID."""
 	client = get_client(ctx)
-	return client.order.get_pending_orders_by_id(ticket=ticket)
+	df = client.order.get_pending_orders_by_id(ticket=ticket)
+	return df.to_csv() if hasattr(df, 'to_csv') else str(df)
 
 @mcp.tool()
-def place_market_order(ctx: Context, symbol: str, volume: float, order_type: str, sl: float = None, tp: float = None) -> dict:
+def place_market_order(ctx: Context, symbol: str, volume: float, type: str) -> dict:
 	"""
 	Place a market order. Parameters:
 		symbol: Symbol name (e.g., 'EURUSD')
 		volume: Lot size. (e.g. 1.5)
-		order_type: Order type ('BUY' or 'SELL')
-		sl (optional): Stop loss price
-		tp (optional): Take profit price
+		type: Order type ('BUY' or 'SELL')
 	"""
 	client = get_client(ctx)
-	return client.order.place_market_order(symbol=symbol, volume=volume, order_type=order_type, sl=sl, tp=tp, comment=comment)
+	return client.order.place_market_order(symbol=symbol, volume=volume, type=type)
 
 @mcp.tool()
-def place_pending_order(ctx: Context, symbol: str, volume: float, order_type: str, price: float, sl: float = None, tp: float = None, expiration: str = None, comment: str = None) -> dict:
+def place_pending_order(ctx: Context, symbol: str, volume: float, type: str, price: float, stop_loss: float = None, take_profit: float = None, expiration: str = None, comment: str = None) -> dict:
 	"""
 	Place a pending order. Parameters:
 		symbol: Symbol name (e.g., 'EURUSD')
 		volume: Lot size. (e.g. 1.5)
-		order_type: Order type ('BUY', 'SELL').
+		type: Order type ('BUY', 'SELL').
 		price: Pending order price.
-		sl (optional): Stop loss price.
-		tp (optional): Take profit price.
+		stop_loss (optional): Stop loss price.
+		take_profit (optional): Take profit price.
 	"""
 	client = get_client(ctx)
-	return client.order.place_pending_order(symbol=symbol, volume=volume, order_type=order_type, price=price, sl=sl, tp=tp, expiration=expiration, comment=comment)
+	return client.order.place_pending_order(symbol=symbol, volume=volume, type=type, price=price, stop_loss=stop_loss, take_profit=take_profit)
 
 @mcp.tool()
-def modify_position(ctx: Context, ticket: int, sl: float = None, tp: float = None) -> dict:
+def modify_position(ctx: Context, ticket: int, stop_loss: float = None, take_profit: float = None) -> dict:
 	"""Modify an open position by ticket ID."""
 	client = get_client(ctx)
-	return client.order.modify_position(ticket=ticket, sl=sl, tp=tp)
+	return client.order.modify_position(ticket=ticket, stop_loss=stop_loss, take_profit=take_profit)
 
 @mcp.tool()
-def modify_pending_order(ctx: Context, ticket: int, price: float = None, sl: float = None, tp: float = None, expiration: str = None) -> dict:
+def modify_pending_order(ctx: Context, ticket: int, price: float = None, stop_loss: float = None, take_profit: float = None, expiration: str = None) -> dict:
 	"""Modify a pending order by ticket ID."""
 	client = get_client(ctx)
-	return client.order.modify_pending_order(ticket=ticket, price=price, sl=sl, tp=tp, expiration=expiration)
+	return client.order.modify_pending_order(ticket=ticket, price=price, stop_loss=stop_loss, take_profit=take_profit, expiration=expiration)
 
 @mcp.tool()
 def close_position(ctx: Context, ticket: int, volume: float = None, price: float = None) -> dict:
