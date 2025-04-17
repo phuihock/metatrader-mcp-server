@@ -10,7 +10,7 @@ authors = [
 ]
 description = "Model Context Protocol (MCP) to enable AI LLMs to trade using MetaTrader platform"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.10"
 license = { file="LICENSE" }
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -18,6 +18,9 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
@@ -38,7 +41,7 @@ dependencies = [
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["mcp_server*", "metatrader_client*"]
+include = ["metatrader_mcp*", "metatrader_client*"]
 
 [project.urls]
 "Homepage" = "https://github.com/ariadng/metatrader-mcp-server"
