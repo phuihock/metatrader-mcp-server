@@ -18,9 +18,9 @@ For full version checklist, see [version-checklist.md](docs/roadmap/version-chec
 | Develop MetaTrader client module | Finished | ✅ | ✅ |
 | Develop MCP Server module | Done | ✅ | ✅ |
 | Implement MCP tools | On progress... | - | - |
-| Windsurf integration | - | - | - |
-| Claude Desktop integration | - | - | - |
 | Publish to PyPi | - | - | - |
+| Claude Desktop integration | - | - | - |
+| Open WebUI integration | - | - | - |
 
 ## Documentation
 
