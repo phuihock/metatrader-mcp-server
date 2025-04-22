@@ -175,16 +175,16 @@ def modify_pending_order(ctx: Context, id: int, price: float = None, stop_loss: 
 	client = get_client(ctx)
 	return client.order.modify_pending_order(id=id, price=price, stop_loss=stop_loss, take_profit=take_profit)
 @mcp.tool()
-def close_position(ctx: Context, ticket: int, volume: float = None, price: float = None) -> dict:
-	"""Close an open position by ticket ID."""
+def close_position(ctx: Context, id: int) -> dict:
+	"""Close an open position by ID."""
 	client = get_client(ctx)
-	return client.order.close_position(ticket=ticket, volume=volume, price=price)
+	return client.order.close_position(id=id)
 
 @mcp.tool()
-def cancel_pending_order(ctx: Context, ticket: int) -> dict:
-	"""Cancel a pending order by ticket ID."""
+def cancel_pending_order(ctx: Context, id: int) -> dict:
+	"""Cancel a pending order by ID."""
 	client = get_client(ctx)
-	return client.order.cancel_pending_order(ticket=ticket)
+	return client.order.cancel_pending_order(id=id)
 
 @mcp.tool()
 def close_all_positions(ctx: Context) -> dict:

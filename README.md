@@ -41,8 +41,8 @@ For full version checklist, see [version-checklist.md](docs/roadmap/version-chec
 15. ✅ `place_pending_order`
 16. ❌ `modify_position` (Fixed)
 17. ❌ `modify_pending_order` (Fixed)
-18. ❌ `close_position`
-19. ❌ `cancel_pending_order`
+18. ❌ `close_position` (Fixed)
+19. ❌ `cancel_pending_order` (Fixed)
 20. ✅ `close_all_positions`
 21. ✅ `close_all_positions_by_symbol`
 22. ✅ `close_all_profittable_positions`
