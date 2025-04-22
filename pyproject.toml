@@ -37,6 +37,7 @@ dependencies = [
   "pydantic>=2.11.3",
   "pydantic-settings>=2.8.1",
   "mcp[cli]>=1.6.0",
+  "click>=8.0.0",
 ]
 
 [tool.setuptools.packages.find]
@@ -49,3 +50,6 @@ include = ["metatrader_mcp*", "metatrader_client*"]
 
 [project.optional-dependencies]
 client = []
+
+[project.scripts]
+"metatrader-mcp-server" = "metatrader_mcp.cli:main"

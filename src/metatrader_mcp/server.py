@@ -2,6 +2,7 @@
 import os
 import argparse
 import logging
+from dotenv import load_dotenv
 
 from mcp.server.fastmcp import FastMCP, Context
 from contextlib import asynccontextmanager
@@ -223,6 +224,7 @@ def cancel_pending_orders_by_symbol(ctx: Context, symbol: str) -> dict:
 	return client.order.cancel_pending_orders_by_symbol(symbol=symbol)
 
 if __name__ == "__main__":
+	load_dotenv()
 	parser = argparse.ArgumentParser(description="MetaTrader MCP Server")
 	parser.add_argument("--login",    type=str, help="MT5 login")
 	parser.add_argument("--password", type=str, help="MT5 password")

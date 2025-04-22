@@ -17,8 +17,8 @@ For full version checklist, see [version-checklist.md](docs/roadmap/version-chec
 | Connect to MetaTrader 5 terminal | Finished | ✅ | ✅ |
 | Develop MetaTrader client module | Finished | ✅ | ✅ |
 | Develop MCP Server module | Finished | ✅ | ✅ |
-| Implement MCP tools | Finished | ✅ | - |
-| Publish to PyPi | - | - | - |
+| Implement MCP tools | Finished | ✅ | ✅ |
+| Publish to PyPi | On progress | - | - |
 | Claude Desktop integration | - | - | - |
 | Open WebUI integration | - | - | - |
 
@@ -48,8 +48,8 @@ Windows (PowerShell):
 
 ### Installing Package
 
-```
-uv pip install -e .
+```bash
+pip install metatrader-mcp-server
 ```
 
 ### Building Package
@@ -77,3 +77,8 @@ twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 ```
 
 Enter credentials when required.
+
+### Usage
+
+```bash
+metatrader-mcp-server --login <LOGIN> --password <PASSWORD> --server <SERVER>
