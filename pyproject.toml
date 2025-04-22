@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "metatrader-mcp-server"
 version = "0.2.1"
 authors = [
-  { name="Aria Dhanang", email="ariadng@gmail.com" },
+  { name = "Aria Dhanang", email = "ariadng@gmail.com" },
 ]
 description = "Model Context Protocol (MCP) server built with Python to enable AI LLMs to trade using MetaTrader platform."
 readme = "README.md"

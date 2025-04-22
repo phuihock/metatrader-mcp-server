@@ -4,10 +4,14 @@ This is a Model Context Protocol (MCP) server built with Python to enable AI LLM
 
 ![MetaTrader MCP Server](https://yvkbpmmzjmfqjxusmyop.supabase.co/storage/v1/object/public/github//metatrader-mcp-server-1.png)
 
+## Disclaimer
+
+**Financial trading involves significant risk, and the developers of this package disclaim any liability for any losses or profits; this package is provided solely to facilitate MetaTrader 5 trade executions via AI LLMs using the Model Context Protocol (MCP). By using this package, you assume all risks and agree not to hold the developers liable or to initiate any legal action for any damages, losses, or profits.**
+
 ## Updates
 
-- April 23, 2025: Published to PyPi (0.2.0) ✌🏻✌🏻✌🏻
-- April 16, 2025: We have our first minor version release (0.1.0) 🎉🎉🎉
+- April 23, 2025: Published to PyPi (0.2.0) 
+- April 16, 2025: We have our first minor version release (0.1.0) 
 
 ## Installation Guide
 
@@ -16,6 +20,8 @@ Make sure you have Python version 3.10+ and MetaTrader 5 terminal installed in y
 ```bash
 pip install metatrader-mcp-server
 ```
+
+Then you need to enable algorithmic trading on MetaTrader 5 terminal. Open `Tools > Options` and check `Allow algorithmic trading`.
 
 ## Claude Desktop Integration
 
