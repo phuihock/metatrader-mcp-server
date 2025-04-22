@@ -33,10 +33,10 @@ For full version checklist, see [version-checklist.md](docs/roadmap/version-chec
 7. ✅ `get_symbols`
 8. ✅ `get_all_positions`
 9. ✅ `get_positions_by_symbol`
-10. ❌ `get_positions_by_id`
+10. ❌ `get_positions_by_id` (Fixed)
 11. ✅ `get_all_pending_orders`
 12. ✅ `get_pending_orders_by_symbol`
-13. ❌ `get_pending_orders_by_id`
+13. ❌ `get_pending_orders_by_id` (Fixed)
 14. ✅ `place_market_order`
 15. ✅ `place_pending_order`
 16. ❌ `modify_position`

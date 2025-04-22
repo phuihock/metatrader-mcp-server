@@ -133,10 +133,10 @@ def get_pending_orders_by_symbol(ctx: Context, symbol: str) -> list:
 	return df.to_csv() if hasattr(df, 'to_csv') else str(df)
 
 @mcp.tool()
-def get_pending_orders_by_id(ctx: Context, ticket: int) -> list:
-	"""Get pending orders by ticket ID."""
+def get_pending_orders_by_id(ctx: Context, id: int) -> list:
+	"""Get pending orders by id."""
 	client = get_client(ctx)
-	df = client.order.get_pending_orders_by_id(ticket=ticket)
+	df = client.order.get_pending_orders_by_id(id=id)
 	return df.to_csv() if hasattr(df, 'to_csv') else str(df)
 
 @mcp.tool()
