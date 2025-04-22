@@ -112,10 +112,10 @@ def get_positions_by_symbol(ctx: Context, symbol: str) -> list:
 	return df.to_csv() if hasattr(df, 'to_csv') else str(df)
 
 @mcp.tool()
-def get_positions_by_id(ctx: Context, ticket: int) -> list:
-	"""Get open positions by ticket ID."""
+def get_positions_by_id(ctx: Context, id: int) -> list:
+	"""Get open positions by ID."""
 	client = get_client(ctx)
-	df = client.order.get_positions_by_id(ticket=ticket)
+	df = client.order.get_positions_by_id(id=id)
 	return df.to_csv() if hasattr(df, 'to_csv') else str(df)
 
 @mcp.tool()
