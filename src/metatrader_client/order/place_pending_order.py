@@ -68,6 +68,6 @@ def place_pending_order(
 
 	return {
 		"error": False,
-		"message": f"Place pending order {order_type} {symbol} {volume} LOT at {price} success (Order ID: {response["data"].order})",
+		"message": f"Place pending order {order_type} {symbol} {volume} LOT at {price} success (Order ID: {response['data'].order})",
 		"data": response["data"],
 	}
