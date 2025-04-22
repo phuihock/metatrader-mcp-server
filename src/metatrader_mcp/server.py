@@ -165,10 +165,10 @@ def place_pending_order(ctx: Context, symbol: str, volume: float, type: str, pri
 	return client.order.place_pending_order(symbol=symbol, volume=volume, type=type, price=price, stop_loss=stop_loss, take_profit=take_profit)
 
 @mcp.tool()
-def modify_position(ctx: Context, ticket: int, stop_loss: float = None, take_profit: float = None) -> dict:
-	"""Modify an open position by ticket ID."""
+def modify_position(ctx: Context, id: int, stop_loss: float = None, take_profit: float = None) -> dict:
+	"""Modify an open position by ID."""
 	client = get_client(ctx)
-	return client.order.modify_position(ticket=ticket, stop_loss=stop_loss, take_profit=take_profit)
+	return client.order.modify_position(id=id, stop_loss=stop_loss, take_profit=take_profit)
 
 @mcp.tool()
 def modify_pending_order(ctx: Context, ticket: int, price: float = None, stop_loss: float = None, take_profit: float = None, expiration: str = None) -> dict:
