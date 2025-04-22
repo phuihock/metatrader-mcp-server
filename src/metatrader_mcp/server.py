@@ -48,16 +48,16 @@ def get_account_info(ctx: Context) -> dict:
 
 @mcp.tool()
 def get_deals(ctx: Context, from_date: str = None, to_date: str = None, symbol: Optional[str] = None) -> str:
-	"""Get historical deals as CSV. Date input in format: ISO 8601 or 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM'."""
+	"""Get historical deals as CSV. Date input in format: 'YYYY-MM-DD'."""
 	client = get_client(ctx)
 	df = client.history.get_deals_as_dataframe(from_date=from_date, to_date=to_date, group=symbol)
 	return df.to_csv() if hasattr(df, 'to_csv') else str(df)
 
 @mcp.tool()
-def get_orders(ctx: Context, from_date: str = None, to_date: str = None, group: str = None, ticket: int = None) -> str:
-	"""Get historical orders as CSV. Date input in format: ISO 8601 or 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM'"""
+def get_orders(ctx: Context, from_date: str = None, to_date: str = None, symbol: Optional[str] = None) -> str:
+	"""Get historical orders as CSV. Date input in format: 'YYYY-MM-DD'"""
 	client = get_client(ctx)
-	df = client.history.get_orders_as_dataframe(from_date=from_date, to_date=to_date, group=group, ticket=ticket)
+	df = client.history.get_orders_as_dataframe(from_date=from_date, to_date=to_date, group=symbol)
 	return df.to_csv() if hasattr(df, 'to_csv') else str(df)
 
 def get_candles_by_date(ctx: Context, symbol_name: str, timeframe: str, from_date: str = None, to_date: str = None) -> str:

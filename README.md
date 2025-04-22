@@ -26,7 +26,7 @@ For full version checklist, see [version-checklist.md](docs/roadmap/version-chec
 
 1. ✅ `get_account_info`
 2. ❌ `get_deals` (Fixed)
-3. ❌ `get_orders`
+3. ❌ `get_orders` (Fixed)
 4. ✅ `get_candles_latest`
 5. ✅ `get_symbol_price`
 6. ✅ `get_all_symbols`

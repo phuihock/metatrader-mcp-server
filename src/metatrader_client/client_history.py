@@ -150,7 +150,7 @@ class MT5History:
             ConnectionError: If not connected to terminal.
         """
         from .history import get_orders
-        return get_orders(self._connection, from_date, to_date, group, ticket)
+        return get_orders(self._connection, from_date, to_date, group)
 
     
     def get_total_deals(
@@ -186,9 +186,8 @@ class MT5History:
         self,
         from_date: Optional[datetime] = None,
         to_date: Optional[datetime] = None,
-        group: Optional[str] = None,
-        ticket: Optional[int] = None
+        group: Optional[str] = None
     ) -> pd.DataFrame:
         from .history import get_orders_as_dataframe
-        return get_orders_as_dataframe(self._connection, from_date, to_date, group, ticket)
+        return get_orders_as_dataframe(self._connection, from_date, to_date, group)
 

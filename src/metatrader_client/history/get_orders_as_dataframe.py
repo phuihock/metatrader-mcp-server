@@ -1,5 +1,4 @@
 from typing import Optional
-from datetime import datetime
 import pandas as pd
 import logging
 from .get_orders import get_orders
@@ -9,16 +8,15 @@ logger = logging.getLogger("MT5History")
 
 def get_orders_as_dataframe(
     connection,
-    from_date: Optional[datetime] = None,
-    to_date: Optional[datetime] = None,
-    group: Optional[str] = None,
-    ticket: Optional[int] = None
+    from_date: Optional[str] = None,
+    to_date: Optional[str] = None,
+    group: Optional[str] = None
 ) -> pd.DataFrame:
     """
     Get historical orders as a pandas DataFrame.
     """
     try:
-        orders = get_orders(connection, from_date, to_date, group, ticket)
+        orders = get_orders(connection, from_date, to_date, group)
         if not orders:
             logger.info("No orders found, returning empty DataFrame.")
             return pd.DataFrame()
