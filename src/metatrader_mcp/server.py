@@ -7,6 +7,7 @@ from mcp.server.fastmcp import FastMCP, Context
 from contextlib import asynccontextmanager
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
+from typing import Optional
 
 from metatrader_mcp.utils import init, get_client
 
@@ -46,10 +47,10 @@ def get_account_info(ctx: Context) -> dict:
 	return client.account.get_trade_statistics()
 
 @mcp.tool()
-def get_deals(ctx: Context, from_date: str = None, to_date: str = None, group: str = None, ticket: int = None, position: int = None) -> str:
+def get_deals(ctx: Context, from_date: str = None, to_date: str = None, symbol: Optional[str] = None) -> str:
 	"""Get historical deals as CSV. Date input in format: ISO 8601 or 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM'."""
 	client = get_client(ctx)
-	df = client.history.get_deals_as_dataframe(from_date=from_date, to_date=to_date, group=group, ticket=ticket, position=position)
+	df = client.history.get_deals_as_dataframe(from_date=from_date, to_date=to_date, group=symbol)
 	return df.to_csv() if hasattr(df, 'to_csv') else str(df)
 
 @mcp.tool()

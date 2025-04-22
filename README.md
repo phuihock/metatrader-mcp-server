@@ -25,7 +25,7 @@ For full version checklist, see [version-checklist.md](docs/roadmap/version-chec
 ### MCP Tools Test Result (2025-04-22):
 
 1. ✅ `get_account_info`
-2. ❌ `get_deals`
+2. ❌ `get_deals` (Fixed)
 3. ❌ `get_orders`
 4. ✅ `get_candles_latest`
 5. ✅ `get_symbol_price`

@@ -72,9 +72,7 @@ class MT5History:
         self,
         from_date: Optional[datetime] = None,
         to_date: Optional[datetime] = None,
-        group: Optional[str] = None,
-        ticket: Optional[int] = None,
-        position: Optional[int] = None
+        group: Optional[str] = None
     ) -> List[Dict[str, Any]]:
         """
         Get historical deals.
@@ -83,8 +81,6 @@ class MT5History:
             from_date: Start date for history (optional).
             to_date: End date for history (optional).
             group: Filter by group pattern, e.g., "*USD*" (optional).
-            ticket: Filter by specific deal ticket (optional).
-            position: Filter by position identifier (optional).
             
         Returns:
             List[Dict[str, Any]]: List of historical deals with properties:
@@ -109,7 +105,8 @@ class MT5History:
             ConnectionError: If not connected to terminal.
         """
         from .history import get_deals
-        return get_deals(self._connection, from_date, to_date, group, ticket, position)
+        return f"from_date: ${from_date}, to_date: {to_date}, group: {group}"
+        return get_deals(self._connection, from_date, to_date, group)
 
     
     def get_orders(
@@ -178,13 +175,12 @@ class MT5History:
         self,
         from_date: Optional[datetime] = None,
         to_date: Optional[datetime] = None,
-        group: Optional[str] = None,
-        ticket: Optional[int] = None,
-        position: Optional[int] = None
+        group: Optional[str] = None
     ) -> pd.DataFrame:
         from .history import get_deals_as_dataframe
-        return get_deals_as_dataframe(self._connection, from_date, to_date, group, ticket, position)
-
+        if group is not None:
+            group = "*" + group + "*"
+        return get_deals_as_dataframe(self._connection, from_date, to_date, group)
     
     def get_orders_as_dataframe(
         self,
