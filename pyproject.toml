@@ -4,16 +4,16 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "metatrader-mcp-server"
-version = "0.1.8"
+version = "0.2.1"
 authors = [
   { name="Aria Dhanang", email="ariadng@gmail.com" },
 ]
-description = "Model Context Protocol (MCP) to enable AI LLMs to trade using MetaTrader platform"
+description = "Model Context Protocol (MCP) server built with Python to enable AI LLMs to trade using MetaTrader platform."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { file="LICENSE" }
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
@@ -22,6 +22,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Topic :: Office/Business :: Financial :: Investment",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
