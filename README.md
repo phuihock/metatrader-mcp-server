@@ -16,41 +16,11 @@ For full version checklist, see [version-checklist.md](docs/roadmap/version-chec
 |------|--------|------|--------|
 | Connect to MetaTrader 5 terminal | Finished | ✅ | ✅ |
 | Develop MetaTrader client module | Finished | ✅ | ✅ |
-| Develop MCP Server module | Done | ✅ | ✅ |
-| Implement MCP tools | On progress... | - | - |
+| Develop MCP Server module | Finished | ✅ | ✅ |
+| Implement MCP tools | Finished | ✅ | - |
 | Publish to PyPi | - | - | - |
 | Claude Desktop integration | - | - | - |
 | Open WebUI integration | - | - | - |
-
-### MCP Tools Test Result (2025-04-22):
-
-1. ✅ `get_account_info`
-2. ❌ `get_deals` (Fixed)
-3. ❌ `get_orders` (Fixed)
-4. ✅ `get_candles_latest`
-5. ✅ `get_symbol_price`
-6. ✅ `get_all_symbols`
-7. ✅ `get_symbols`
-8. ✅ `get_all_positions`
-9. ✅ `get_positions_by_symbol`
-10. ❌ `get_positions_by_id` (Fixed)
-11. ✅ `get_all_pending_orders`
-12. ✅ `get_pending_orders_by_symbol`
-13. ❌ `get_pending_orders_by_id` (Fixed)
-14. ✅ `place_market_order`
-15. ✅ `place_pending_order`
-16. ❌ `modify_position` (Fixed)
-17. ❌ `modify_pending_order` (Fixed)
-18. ❌ `close_position` (Fixed)
-19. ❌ `cancel_pending_order` (Fixed)
-20. ✅ `close_all_positions`
-21. ✅ `close_all_positions_by_symbol`
-22. ✅ `close_all_profittable_positions`
-23. ✅ `close_all_losing_positions`
-24. ✅ `cancel_all_pending_orders`
-25. ✅ `cancel_pending_orders_by_symbol`
-
-Result **68%** (17 success & 8 failed).
 
 ## Documentation
 

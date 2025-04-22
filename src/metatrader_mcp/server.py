@@ -7,7 +7,7 @@ from mcp.server.fastmcp import FastMCP, Context
 from contextlib import asynccontextmanager
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Union
 
 from metatrader_mcp.utils import init, get_client
 
@@ -47,14 +47,14 @@ def get_account_info(ctx: Context) -> dict:
 	return client.account.get_trade_statistics()
 
 @mcp.tool()
-def get_deals(ctx: Context, from_date: str = None, to_date: str = None, symbol: Optional[str] = None) -> str:
+def get_deals(ctx: Context, from_date: Optional[str] = None, to_date: Optional[str] = None, symbol: Optional[str] = None) -> str:
 	"""Get historical deals as CSV. Date input in format: 'YYYY-MM-DD'."""
 	client = get_client(ctx)
 	df = client.history.get_deals_as_dataframe(from_date=from_date, to_date=to_date, group=symbol)
 	return df.to_csv() if hasattr(df, 'to_csv') else str(df)
 
 @mcp.tool()
-def get_orders(ctx: Context, from_date: str = None, to_date: str = None, symbol: Optional[str] = None) -> str:
+def get_orders(ctx: Context, from_date: Optional[str] = None, to_date: Optional[str] = None, symbol: Optional[str] = None) -> str:
 	"""Get historical orders as CSV. Date input in format: 'YYYY-MM-DD'"""
 	client = get_client(ctx)
 	df = client.history.get_orders_as_dataframe(from_date=from_date, to_date=to_date, group=symbol)
@@ -86,7 +86,7 @@ def get_all_symbols(ctx: Context) -> list:
 	return client.market.get_symbols()
 
 @mcp.tool()
-def get_symbols(ctx: Context, group: str = None) -> list:
+def get_symbols(ctx: Context, group: Optional[str] = None) -> list:
 	"""
 	Get a list of available market symbols. Filter symbols by group pattern (e.g., '*USD*').
 	"""
@@ -112,7 +112,7 @@ def get_positions_by_symbol(ctx: Context, symbol: str) -> list:
 	return df.to_csv() if hasattr(df, 'to_csv') else str(df)
 
 @mcp.tool()
-def get_positions_by_id(ctx: Context, id: int) -> list:
+def get_positions_by_id(ctx: Context, id: Union[int, str]) -> list:
 	"""Get open positions by ID."""
 	client = get_client(ctx)
 	df = client.order.get_positions_by_id(id=id)
@@ -133,7 +133,7 @@ def get_pending_orders_by_symbol(ctx: Context, symbol: str) -> list:
 	return df.to_csv() if hasattr(df, 'to_csv') else str(df)
 
 @mcp.tool()
-def get_pending_orders_by_id(ctx: Context, id: int) -> list:
+def get_pending_orders_by_id(ctx: Context, id: Union[int, str]) -> list:
 	"""Get pending orders by id."""
 	client = get_client(ctx)
 	df = client.order.get_pending_orders_by_id(id=id)
@@ -151,7 +151,7 @@ def place_market_order(ctx: Context, symbol: str, volume: float, type: str) -> d
 	return client.order.place_market_order(symbol=symbol, volume=volume, type=type)
 
 @mcp.tool()
-def place_pending_order(ctx: Context, symbol: str, volume: float, type: str, price: float, stop_loss: float = None, take_profit: float = None, expiration: str = None, comment: str = None) -> dict:
+def place_pending_order(ctx: Context, symbol: str, volume: float, type: str, price: float, stop_loss: Optional[Union[int, float]] = 0.0, take_profit: Optional[Union[int, float]] = 0.0) -> dict:
 	"""
 	Place a pending order. Parameters:
 		symbol: Symbol name (e.g., 'EURUSD')
@@ -165,23 +165,23 @@ def place_pending_order(ctx: Context, symbol: str, volume: float, type: str, pri
 	return client.order.place_pending_order(symbol=symbol, volume=volume, type=type, price=price, stop_loss=stop_loss, take_profit=take_profit)
 
 @mcp.tool()
-def modify_position(ctx: Context, id: int, stop_loss: float = None, take_profit: float = None) -> dict:
+def modify_position(ctx: Context, id: Union[int, str], stop_loss: Optional[Union[int, float]] = None, take_profit: Optional[Union[int, float]] = None) -> dict:
 	"""Modify an open position by ID."""
 	client = get_client(ctx)
 	return client.order.modify_position(id=id, stop_loss=stop_loss, take_profit=take_profit)
 @mcp.tool()
-def modify_pending_order(ctx: Context, id: int, price: float = None, stop_loss: float = None, take_profit: float = None) -> dict:
+def modify_pending_order(ctx: Context, id: Union[int, str], price: Optional[Union[int, float]] = None, stop_loss: Optional[Union[int, float]] = None, take_profit: Optional[Union[int, float]] = None) -> dict:
 	"""Modify a pending order by ID."""
 	client = get_client(ctx)
 	return client.order.modify_pending_order(id=id, price=price, stop_loss=stop_loss, take_profit=take_profit)
 @mcp.tool()
-def close_position(ctx: Context, id: int) -> dict:
+def close_position(ctx: Context, id: Union[int, str]) -> dict:
 	"""Close an open position by ID."""
 	client = get_client(ctx)
 	return client.order.close_position(id=id)
 
 @mcp.tool()
-def cancel_pending_order(ctx: Context, id: int) -> dict:
+def cancel_pending_order(ctx: Context, id: Union[int, str]) -> dict:
 	"""Cancel a pending order by ID."""
 	client = get_client(ctx)
 	return client.order.cancel_pending_order(id=id)
