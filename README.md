@@ -40,7 +40,7 @@ For full version checklist, see [version-checklist.md](docs/roadmap/version-chec
 14. ✅ `place_market_order`
 15. ✅ `place_pending_order`
 16. ❌ `modify_position` (Fixed)
-17. ❌ `modify_pending_order`
+17. ❌ `modify_pending_order` (Fixed)
 18. ❌ `close_position`
 19. ❌ `cancel_pending_order`
 20. ✅ `close_all_positions`
