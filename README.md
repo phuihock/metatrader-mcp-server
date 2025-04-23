@@ -42,6 +42,26 @@ To use this package to enable trading operations via Claude Desktop app, please 
 }
 ```
 
+## Other LLMs using Open WebUI
+
+You can use this MCP server with other LLMs such as OpenAI's GPT by using its HTTP server and Open WebUI.
+
+To start, make sure you have installed the package. Then, run the server:
+
+```
+metatrader-http-server --login <YOUR_MT5_LOGIN> --password <YOUR_MT5_PASSWORD> --server <YOUR_MT5_SERVER> --host 0.0.0.0 --port 8000
+```
+
+It will launch HTTP server locally on port 8000 and automatically launch MetaTrader 5 terminal.
+
+On Open WebUI settings page, navigate to **Tools** menu. Then click plus button on "Manage Tool Servers". Add `http://localhost:8000` (or whatever you set your port is).
+
+![Open WebUI - Add Connection](https://yvkbpmmzjmfqjxusmyop.supabase.co/storage/v1/object/public/github//openwebui-add-tools.png)
+
+If all is well, you can now access the tools via chat using available models, such as `gpt-4o` or `o4-mini`.
+
+![Open WebUI - Chat](https://yvkbpmmzjmfqjxusmyop.supabase.co/storage/v1/object/public/github//openwebui-chat.png)
+
 ## Project Roadmap
 
 For full version checklist, see [version-checklist.md](docs/roadmap/version-checklist.md).
@@ -54,7 +74,7 @@ For full version checklist, see [version-checklist.md](docs/roadmap/version-chec
 | Implement MCP tools | Finished | ✅ | ✅ |
 | Publish to PyPi | Finished | ✅ | ✅ |
 | Claude Desktop integration | Finished | ✅ | ✅ |
-| OpenAPI server | - | - | - |
+| OpenAPI server | Finished | ✅ | - |
 | Open WebUI integration | - | - | - |
 
 ## Developer Documentation
