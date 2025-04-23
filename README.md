@@ -54,6 +54,7 @@ For full version checklist, see [version-checklist.md](docs/roadmap/version-chec
 | Implement MCP tools | Finished | ✅ | ✅ |
 | Publish to PyPi | Finished | ✅ | ✅ |
 | Claude Desktop integration | Finished | ✅ | ✅ |
+| OpenAPI server | - | - | - |
 | Open WebUI integration | - | - | - |
 
 ## Developer Documentation

@@ -2,7 +2,17 @@
 
 This document act as to do list to make the project more manageable.
 
-*Last update at April 16, 2025*
+*Last update at April 23, 2025*
+
+## v0.3.0
+
+Version 0.3 is focused on building OpenAPI server that can be integrated with Open WebUI. Here is the checklist to v0.3 release:
+
+| Version | Feature | Done | Tested |
+| --- | --- | --- | --- |
+| **0.2.1** | OpenAPI server boilerplate | - | - |
+| **0.2.2** | Expose existing MCP tools via REST endpoints | - | - |
+| **0.2.3** | Make the server runnable via `uvx` command | - | - |
 
 ## v0.2.0
 
