@@ -1,5 +1,6 @@
 # pylint: disable=import-error
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from .config import Settings
 from .routers import router as api_router
 import os
@@ -36,10 +37,19 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Enable CORS for Open WebUI and other clients
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Include API routers
 app.include_router(api_router, prefix="/api/v1")
 
-if __name__ == "__main__":
+def main():
     load_dotenv()
     parser = argparse.ArgumentParser(description="MetaTrader OpenAPI server")
     parser.add_argument("--login", required=True, help="MT5 login")
@@ -58,8 +68,11 @@ if __name__ == "__main__":
     os.environ["server"] = args.server
 
     uvicorn.run(
-        "src.metatrader_openapi.main:app",
+        "metatrader_openapi.main:app",
         host=args.host,
         port=args.port,
         reload=True,
     )
+
+if __name__ == "__main__":
+    main()

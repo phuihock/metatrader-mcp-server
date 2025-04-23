@@ -55,3 +55,4 @@ client = []
 
 [project.scripts]
 "metatrader-mcp-server" = "metatrader_mcp.cli:main"
+"metatrader-http-server" = "metatrader_openapi.main:main"
