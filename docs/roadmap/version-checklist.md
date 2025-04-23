@@ -2,19 +2,9 @@
 
 This document act as to do list to make the project more manageable.
 
-*Last update at April 23, 2025*
+*Last update at April 16, 2025*
 
-## v0.3.0
-
-Version 0.3 is focused on building OpenAPI server that can be integrated with Open WebUI. Here is the checklist to v0.3 release:
-
-| Version | Feature | Done | Tested |
-| --- | --- | --- | --- |
-| **0.2.1** | OpenAPI server boilerplate | - | - |
-| **0.2.2** | Expose existing MCP tools via REST endpoints | - | - |
-| **0.2.3** | Make the server runnable via `uvx` command | - | - |
-
-## v0.2.0
+## v0.2.0 ✅
 
 Version 0.2 is about developing the actual MCP server. Here is the checklist to v0.2 release:
 
@@ -23,12 +13,12 @@ Version 0.2 is about developing the actual MCP server. Here is the checklist to 
 | **0.1.1** | Basic structure for MCP server | ✅ | ✅ |
 | **0.1.2** | MT5 terminal connection | ✅ | ✅ |
 | **0.1.3** | Register Account module tools | ✅ | ✅ |
-| **0.1.4** | Register Market module tools | ✅ | - |
-| **0.1.5** | Register History module tools | ✅ | - |
-| **0.1.6** | Register Order module tools | ✅ | - |
-| **0.1.7** | Register Client package tools | ✅ | - |
+| **0.1.4** | Register Market module tools | ✅ | ✅ |
+| **0.1.5** | Register History module tools | ✅ | ✅ |
+| **0.1.6** | Register Order module tools | ✅ | ✅ |
+| **0.1.7** | Register Client package tools | ✅ | ✅ |
 
-All version after 0.1.6 and before 0.2.0 are patches and bug fixes.
+All version after 0.1.7 and before 0.2.0 are patches and bug fixes.
 
 ## v0.1.0 ✅
 
