@@ -49,6 +49,24 @@ pip install mcp[cli]
 mcp install src/mcp/main.py
 ```
 
+## Build 🏗️
+
+To build the package from source:
+
+```bash
+pip install build
+python -m build
+```
+
+## Publish to PyPI 🚀
+
+To publish a new release to PyPI:
+
+```bash
+pip install twine
+python -m twine upload dist/*
+```
+
 ## Using with Claude Desktop 🤖
 
 After installing the MCP server in Claude Desktop:
