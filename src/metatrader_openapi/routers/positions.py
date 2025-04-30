@@ -5,7 +5,7 @@ router = APIRouter()
 
 @router.get("", response_model=List[Dict[str, Any]])
 async def positions_all(request: Request):
-    """Get all open positions."""
+    """Get all open positions as a DataFrame."""
     client = request.app.state.client
     try:
         df = client.order.get_all_positions()
@@ -15,7 +15,7 @@ async def positions_all(request: Request):
 
 @router.get("/symbol/{symbol}", response_model=List[Dict[str, Any]])
 async def positions_by_symbol(request: Request, symbol: str = Path(..., description="Symbol name")):
-    """Get open positions for a specific symbol."""
+    """Get positions filtered by symbol."""
     client = request.app.state.client
     try:
         df = client.order.get_positions_by_symbol(symbol=symbol)
@@ -25,7 +25,7 @@ async def positions_by_symbol(request: Request, symbol: str = Path(..., descript
 
 @router.get("/{id}", response_model=List[Dict[str, Any]])
 async def positions_by_id(request: Request, id: Union[int, str] = Path(..., description="Position ID")):
-    """Get open positions by ID."""
+    """Get position by ticket or ID."""
     client = request.app.state.client
     try:
         df = client.order.get_positions_by_id(id=id)
@@ -40,7 +40,7 @@ async def modify_position(
     stop_loss: Optional[float] = Body(None, description="Stop loss price"),
     take_profit: Optional[float] = Body(None, description="Take profit price"),
 ):
-    """Modify an open position by ID."""
+    """Modify stop loss/take profit of a position."""
     client = request.app.state.client
     try:
         return client.order.modify_position(id=id, stop_loss=stop_loss, take_profit=take_profit)
@@ -49,7 +49,7 @@ async def modify_position(
 
 @router.delete("/{id}", response_model=Dict[str, Any])
 async def close_position(request: Request, id: Union[int, str] = Path(..., description="Position ID")):
-    """Close an open position by ID."""
+    """Closes a specific position by its ID."""
     client = request.app.state.client
     try:
         return client.order.close_position(id=id)
@@ -67,7 +67,7 @@ async def close_all_positions(request: Request):
 
 @router.delete("/symbol/{symbol}", response_model=Dict[str, Any])
 async def close_positions_by_symbol(request: Request, symbol: str = Path(..., description="Symbol name")):
-    """Close all open positions for a specific symbol."""
+    """Close all positions for a symbol."""
     client = request.app.state.client
     try:
         return client.order.close_all_positions_by_symbol(symbol=symbol)

@@ -12,7 +12,16 @@ async def candles_latest(
     timeframe: str = Query(..., description="Timeframe, e.g., 'M1', 'H1'"),
     count: int = Query(100, description="Number of candles to retrieve")
 ):
-    """Get latest candles as a list of records."""
+    """Fetch the latest N candles for a given symbol and timeframe.
+
+    Input:
+        symbol_name (str): The symbol, e.g., 'EURUSD'.
+        timeframe (str): Timeframe string, e.g., 'M1', 'H1'.
+        count (int): Number of candles to retrieve (default=100).
+
+    Response:
+        List[Dict[str, Any]]: List of candle records with keys 'time', 'open', 'high', 'low', 'close', 'volume'.
+    """
     client = request.app.state.client
     try:
         df = client.market.get_candles_latest(symbol_name=symbol_name, timeframe=timeframe, count=count)
@@ -27,7 +36,14 @@ async def symbol_price(
     request: Request,
     symbol_name: str
 ):
-    """Get latest symbol price info."""
+    """Get the latest price and tick data for a symbol.
+
+    Input:
+        symbol_name (str): The symbol to query.
+
+    Response:
+        Dict[str, Any]: {'bid': float, 'ask': float, 'last': float, 'volume': int, 'time': datetime}.
+    """
     client = request.app.state.client
     try:
         return client.market.get_symbol_price(symbol_name=symbol_name)
@@ -38,7 +54,14 @@ async def symbol_price(
 
 @router.get("/symbols", response_model=List[str])
 async def all_symbols(request: Request):
-    """Get a list of all market symbols."""
+    """Get a list of all available market symbols.
+
+    Input:
+        None
+
+    Response:
+        List[str]: List of symbol names.
+    """
     client = request.app.state.client
     try:
         return client.market.get_symbols()
@@ -52,7 +75,14 @@ async def filter_symbols(
     request: Request,
     group: Optional[str] = Query(None, description="Filter pattern, e.g., '*USD*'")
 ):
-    """Get symbols filtered by group pattern."""
+    """Get a list of all available market symbols, optionally filtered by group.
+
+    Input:
+        group (Optional[str]): Filter pattern, e.g., '*USD*'.
+
+    Response:
+        List[str]: List of symbol names.
+    """
     client = request.app.state.client
     try:
         return client.market.get_symbols(group=group)

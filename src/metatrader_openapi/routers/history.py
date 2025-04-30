@@ -11,7 +11,17 @@ async def history_deals(
     to_date: Optional[datetime] = Query(None, description="End date (ISO format)"),
     symbol: Optional[str] = Query(None, description="Symbol filter, e.g., 'EURUSD'")
 ):
-    """Get historical deals via MCP tool."""
+    """
+    Fetches historical deals and returns them as a list of records for easy data analysis and manipulation.
+
+    Input:
+        from_date (Optional[datetime]): Start date (ISO format)
+        to_date (Optional[datetime]): End date (ISO format)
+        symbol (Optional[str]): Symbol filter, e.g., 'EURUSD'
+
+    Response:
+        List[Dict[str, Any]]: List of deals as dictionaries.
+    """
     client = request.app.state.client
     try:
         df = client.history.get_deals_as_dataframe(from_date=from_date, to_date=to_date, group=symbol)
@@ -26,7 +36,17 @@ async def history_orders(
     to_date: Optional[datetime] = Query(None, description="End date (ISO format)"),
     symbol: Optional[str] = Query(None, description="Symbol filter, e.g., 'EURUSD'")
 ):
-    """Get historical orders via MCP tool."""
+    """
+    Fetches historical orders and returns them as a list of records for easy data analysis and reporting.
+
+    Input:
+        from_date (Optional[datetime]): Start date (ISO format)
+        to_date (Optional[datetime]): End date (ISO format)
+        symbol (Optional[str]): Symbol filter, e.g., 'EURUSD'
+
+    Response:
+        List[Dict[str, Any]]: List of orders as dictionaries.
+    """
     client = request.app.state.client
     try:
         df = client.history.get_orders_as_dataframe(from_date=from_date, to_date=to_date, group=symbol)
