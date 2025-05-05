@@ -93,11 +93,19 @@ def send_order(
 
 	# Validate symbol
 	if symbol is not None:
-			if (len(_market.get_symbols(symbol)) == 0):
-				return { "success": False, "message": "Invalid symbol" }
-			# Ensure symbol is available
-			if not mt5.symbol_select(symbol, True):
-				return { "success": False, "message": f"Failed to select {symbol}" }
+		if (len(_market.get_symbols(symbol)) == 0):
+			return { "success": False, "message": "Invalid symbol" }
+		# Ensure symbol is available
+		if not mt5.symbol_select(symbol, True):
+			return { "success": False, "message": f"Failed to select {symbol}" }
+	
+	# Get symbol info
+	symbol_info = mt5.symbol_info(symbol)
+	if symbol_info is None:
+		return { "success": False, "message": f"Failed to get symbol info for {symbol}" }
+	
+	# Fetch broker-supported filling modes
+	filling_mask = info.filling_mode
 
 	# Validate volume
 	if volume is not None:
@@ -150,13 +158,29 @@ def send_order(
 			if order_type not in [OrderType.BUY, OrderType.SELL]:
 				return { "success": False, "message": "Invalid order type, must be BUY or SELL", "data": None }
 
+			possible_fillings = [
+				mt5.ORDER_FILLING_FOK,
+				mt5.ORDER_FILLING_IOC,
+				mt5.ORDER_FILLING_RETURN
+			]
+
+			selected_filling = None
+
+			for mode in possible_fillings:
+				if filling_mask & mode:
+					selected_filling = mode
+					break
+			
+			if selected_filling is None:
+				return { "success": False, "message": f"No supported filling mode for {symbol}", "data": None }
+
 			request = {
 				"symbol": symbol,
 				"volume": volume,
 				"type": order_type,
 				"price": price,
 				"action": action,
-				"type_filling": mt5.ORDER_FILLING_FOK,
+				"type_filling": selected_filling,
 				"comment": comment,
 				"sl": stop_loss,
 				"tp": take_profit,
