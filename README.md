@@ -10,6 +10,7 @@ This is a Model Context Protocol (MCP) server built with Python to enable AI LLM
 
 ## Updates
 
+- May 5, 2025: Use broker-based filling modes (0.2.5)
 - April 23, 2025: Published to PyPi (0.2.0) 
 - April 16, 2025: We have our first minor version release (0.1.0) 
 
