@@ -38,6 +38,13 @@ def place_market_order(connection, *, type: str, symbol: str, volume: Union[floa
 
     data = response["data"]
 
+    if data is None:
+        return {
+            "error": False,
+            "message": "Market order success.",
+            "data": response
+        }
+
     return {
         "error": False,
         "message": f"{type} {data.request.symbol} {data.volume} LOT at {data.price} success (Position ID: {data.order})",

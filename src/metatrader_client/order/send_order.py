@@ -97,20 +97,29 @@ def send_order(
 			return { "success": False, "message": "Invalid symbol" }
 		# Ensure symbol is available
 		if not mt5.symbol_select(symbol, True):
-			return { "success": False, "message": f"Failed to select {symbol}" }
+			return { "success": False, "message": f"Failed to select {symbol}", "data": None }
 	
 	# Get symbol info
 	symbol_info = mt5.symbol_info(symbol)
 	if symbol_info is None:
-		return { "success": False, "message": f"Failed to get symbol info for {symbol}" }
+		return { "success": False, "message": f"Failed to get symbol info for {symbol}", "data": None }
 	
 	# Fetch broker-supported filling modes
-	filling_mask = info.filling_mode
+	filling_mask = symbol_info.filling_mode
+	filling_to_enum = {
+		1: mt5.ORDER_FILLING_FOK,
+		2: mt5.ORDER_FILLING_IOC,
+		4: mt5.ORDER_FILLING_RETURN
+	}
+	for flag, enum in filling_to_enum.items():
+		if filling_mask & flag:
+			selected_filling = enum
+			break
 
 	# Validate volume
 	if volume is not None:
 		if (volume <= 0 or volume > 100):
-			return { "success": False, "message": "Invalid volume" }
+			return { "success": False, "message": "Invalid volume", "data": None }
 		else:
 			volume = float(volume)
 
@@ -157,22 +166,6 @@ def send_order(
 			
 			if order_type not in [OrderType.BUY, OrderType.SELL]:
 				return { "success": False, "message": "Invalid order type, must be BUY or SELL", "data": None }
-
-			possible_fillings = [
-				mt5.ORDER_FILLING_FOK,
-				mt5.ORDER_FILLING_IOC,
-				mt5.ORDER_FILLING_RETURN
-			]
-
-			selected_filling = None
-
-			for mode in possible_fillings:
-				if filling_mask & mode:
-					selected_filling = mode
-					break
-			
-			if selected_filling is None:
-				return { "success": False, "message": f"No supported filling mode for {symbol}", "data": None }
 
 			request = {
 				"symbol": symbol,
@@ -238,7 +231,7 @@ def send_order(
 				"comment": comment,
 				"type_time": OrderTime.SPECIFIED.value if expiration else OrderTime.GTC.value,
 				"expiration": expiration if expiration else 0,
-				"type_filling": OrderFilling.FOK.value,
+				"type_filling": selected_filling,
 			}
 
 			response = mt5.order_send(request)
