@@ -1,5 +1,6 @@
 # pylint: disable=import-error
 from fastapi import FastAPI
+from fastapi.routing import APIRoute
 from fastapi.middleware.cors import CORSMiddleware
 from .config import Settings
 from .routers import router as api_router
@@ -47,7 +48,13 @@ app.add_middleware(
 )
 
 # Include API routers
-app.include_router(api_router, prefix="/api/v1")
+def strip_prefix(route: APIRoute) -> str:
+    op_id = route.name
+    prefix = "api_v1_"
+    if op_id.startswith(prefix):
+        op_id = op_id[len(prefix):]
+    return op_id
+app.include_router(api_router, prefix="/api/v1", generate_unique_id_function=strip_prefix)
 
 def main():
     load_dotenv()
