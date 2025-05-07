@@ -98,27 +98,25 @@ def send_order(
 		# Ensure symbol is available
 		if not mt5.symbol_select(symbol, True):
 			return { "success": False, "message": f"Failed to select {symbol}", "data": None }
-	
-	# Get symbol info
-	symbol_info = mt5.symbol_info(symbol)
-	if symbol_info is None:
-		return { "success": False, "message": f"Failed to get symbol info for {symbol}", "data": None }
-	
-	# Fetch broker-supported filling modes
-	filling_mask = symbol_info.filling_mode
-	filling_to_enum = {
-		1: mt5.ORDER_FILLING_FOK,
-		2: mt5.ORDER_FILLING_IOC,
-		4: mt5.ORDER_FILLING_RETURN
-	}
-	for flag, enum in filling_to_enum.items():
-		if filling_mask & flag:
-			selected_filling = enum
-			break
+		# Get symbol info
+		symbol_info = mt5.symbol_info(symbol)
+		if symbol_info is None:
+			return { "success": False, "message": f"Failed to get symbol info for {symbol}", "data": None }
+		# Fetch broker-supported filling modes
+		filling_mask = symbol_info.filling_mode
+		filling_to_enum = {
+			1: mt5.ORDER_FILLING_FOK,
+			2: mt5.ORDER_FILLING_IOC,
+			4: mt5.ORDER_FILLING_RETURN
+		}
+		for flag, enum in filling_to_enum.items():
+			if filling_mask & flag:
+				selected_filling = enum
+				break
 
 	# Validate volume
 	if volume is not None:
-		if (volume <= 0 or volume > 100):
+		if (volume <= 0 or volume > 100 or volume == 0):
 			return { "success": False, "message": "Invalid volume", "data": None }
 		else:
 			volume = float(volume)
@@ -166,6 +164,16 @@ def send_order(
 			
 			if order_type not in [OrderType.BUY, OrderType.SELL]:
 				return { "success": False, "message": "Invalid order type, must be BUY or SELL", "data": None }
+
+			# Ensure the price is not zero
+			if price == 0:
+				tick = mt5.symbol_info_tick(symbol)
+				if tick is None:
+					return { "success": False, "message": "Failed to get symbol info for {symbol}", "data": None }
+				price = tick.ask if order_type == OrderType.BUY else tick.bid
+				# Round to broker's precision
+				digits = symbol_info.digits
+				price = round(price, digits)
 
 			request = {
 				"symbol": symbol,
