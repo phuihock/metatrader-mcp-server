@@ -47,6 +47,24 @@ async def modify_position(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.delete("/profitable", response_model=Dict[str, Any])
+async def close_profitable_positions(request: Request):
+    """Close all profitable positions. No input parameters required."""
+    client = request.app.state.client
+    try:
+        return client.order.close_all_profitable_positions()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.delete("/losing", response_model=Dict[str, Any])
+async def close_losing_positions(request: Request):
+    """Close all losing positions. No input parameters required."""
+    client = request.app.state.client
+    try:
+        return client.order.close_all_losing_positions()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.delete("/{id}", response_model=Dict[str, Any])
 async def close_position(request: Request, id: Union[int, str] = Path(..., description="Position ID")):
     """Closes a specific position by its ID."""
@@ -74,20 +92,3 @@ async def close_positions_by_symbol(request: Request, symbol: str = Path(..., de
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.delete("/profitable", response_model=Dict[str, Any])
-async def close_profitable_positions(request: Request):
-    """Close all profitable positions. No input parameters required."""
-    client = request.app.state.client
-    try:
-        return client.order.close_all_profitable_positions()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@router.delete("/losing", response_model=Dict[str, Any])
-async def close_losing_positions(request: Request):
-    """Close all losing positions. No input parameters required."""
-    client = request.app.state.client
-    try:
-        return client.order.close_all_losing_positions()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
