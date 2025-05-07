@@ -169,7 +169,7 @@ def send_order(
 			if price == 0:
 				tick = mt5.symbol_info_tick(symbol)
 				if tick is None:
-					return { "success": False, "message": "Failed to get symbol info for {symbol}", "data": None }
+					return { "success": False, "message": "Failed to get tick for {symbol}", "data": None }
 				price = tick.ask if order_type == OrderType.BUY else tick.bid
 				# Round to broker's precision
 				digits = symbol_info.digits
