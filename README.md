@@ -63,7 +63,7 @@ On Open WebUI settings page, navigate to **Tools** menu. Then click plus button 
 
 If all is well, you can now access the tools via chat using available models, such as `gpt-4o` or `o4-mini`.
 
-![Open WebUI - Chat](https://yvkbpmmzjmfqjxusmyop.supabase.co/storage/v1/object/public/github//openwebui-chat.png)
+![Open WebUI - Chat](https://yvkbpmmzjmfqjxusmyop.supabase.co/storage/v1/object/public/github//openwebui-macos.png)
 
 ## Project Roadmap
 
