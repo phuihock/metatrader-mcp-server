@@ -34,9 +34,38 @@ async def candles_latest(
 @router.get("/price/{symbol_name}", response_model=Dict[str, Any])
 async def symbol_price(
     request: Request,
-    symbol_name: str
+    symbol_name: str,
+    query_symbol_name: Optional[str] = Query(None, alias="symbol_name")
 ):
     """Get the latest price and tick data for a symbol.
+
+    Input:
+        symbol_name (str): The symbol to query (path parameter).
+        query_symbol_name (Optional[str]): The symbol to query (query parameter, fallback).
+
+    Response:
+        Dict[str, Any]: {'bid': float, 'ask': float, 'last': float, 'volume': int, 'time': datetime}.
+    """
+    client = request.app.state.client
+    # Use path parameter if it's not the literal '{symbol_name}', otherwise use query parameter
+    actual_symbol_name = symbol_name if symbol_name != "{symbol_name}" else query_symbol_name
+    
+    if not actual_symbol_name:
+        raise HTTPException(status_code=400, detail="Symbol name must be provided")
+    
+    try:
+        return client.market.get_symbol_price(symbol_name=actual_symbol_name)
+    except MT5ConnectionError as e:
+        raise HTTPException(status_code=503, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/price", response_model=Dict[str, Any])
+async def symbol_price_query(
+    request: Request,
+    symbol_name: str = Query(..., description="Symbol name, e.g., 'EURUSD'")
+):
+    """Get the latest price and tick data for a symbol using query parameter.
 
     Input:
         symbol_name (str): The symbol to query.
