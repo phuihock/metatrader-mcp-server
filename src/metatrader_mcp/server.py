@@ -200,10 +200,10 @@ def close_all_positions_by_symbol(ctx: Context, symbol: str) -> dict:
 	return client.order.close_all_positions_by_symbol(symbol=symbol)
 
 @mcp.tool()
-def close_all_profittable_positions(ctx: Context) -> dict:
+def close_all_profitable_positions(ctx: Context) -> dict:
 	"""Close all profitable positions."""
 	client = get_client(ctx)
-	return client.order.close_all_profittable_positions()
+	return client.order.close_all_profitable_positions()
 
 @mcp.tool()
 def close_all_losing_positions(ctx: Context) -> dict:

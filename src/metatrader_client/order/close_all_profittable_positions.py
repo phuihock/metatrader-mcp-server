@@ -1,9 +1,9 @@
 from .get_all_positions import get_all_positions
 from .close_position import close_position
 
-def close_all_profittable_positions(connection):
+def close_all_profitable_positions(connection):
     """
-    Close all open positions that are currently profittable.
+    Close all open positions that are currently profitable.
 
     Args:
         connection: The connection object to the MetaTrader platform.
@@ -18,4 +18,4 @@ def close_all_profittable_positions(connection):
     for id in positions["id"]:
         close_position(connection, id)
         count += 1
-    return { "error": False, "message": f"Close {count} profittable positions success", "data": None }
+    return { "error": False, "message": f"Close {count} profitable positions success", "data": None }

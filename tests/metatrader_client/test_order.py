@@ -141,9 +141,9 @@ def test_full_order_functionality(mt5_client):
 
     # 13. Close all profitable positions
     print("\n💰 Closing all profitable positions...")
-    close_profitable = mt5_client.order.close_all_profittable_positions()
+    close_profitable = mt5_client.order.close_all_profitable_positions()
     print(f"💰 Closed profitable positions: {close_profitable}")
-    summary.append("💰 close_all_profittable_positions: ✅")
+    summary.append("💰 close_all_profitable_positions: ✅")
 
     # 14. Close all losing positions
     print("\n🔻 Closing all losing positions...")

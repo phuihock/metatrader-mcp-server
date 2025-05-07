@@ -26,7 +26,7 @@ from .close_position import close_position
 from .cancel_pending_order import cancel_pending_order
 from .close_all_positions import close_all_positions
 from .close_all_positions_by_symbol import close_all_positions_by_symbol
-from .close_all_profittable_positions import close_all_profittable_positions
+from .close_all_profitable_positions import close_all_profitable_positions
 from .close_all_losing_positions import close_all_losing_positions
 from .cancel_all_pending_orders import cancel_all_pending_orders
 from .cancel_pending_orders_by_symbol import cancel_pending_orders_by_symbol
@@ -57,7 +57,7 @@ __all__ = [
     "cancel_pending_order",
     "close_all_positions",
     "close_all_positions_by_symbol",
-    "close_all_profittable_positions",
+    "close_all_profitable_positions",
     "close_all_losing_positions",
     "cancel_all_pending_orders",
     "cancel_pending_orders_by_symbol",

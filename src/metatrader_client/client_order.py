@@ -10,7 +10,7 @@ from typing import Optional, Union
 from .order import get_all_positions, get_positions_by_symbol, get_positions_by_currency, get_positions_by_id
 from .order import get_all_pending_orders, get_pending_orders_by_symbol, get_pending_orders_by_currency, get_pending_orders_by_id
 from .order import place_market_order, place_pending_order, modify_position, modify_pending_order
-from .order import close_position, close_all_positions, close_all_positions_by_symbol, close_all_profittable_positions, close_all_losing_positions
+from .order import close_position, close_all_positions, close_all_positions_by_symbol, close_all_profitable_positions, close_all_losing_positions
 from .order import cancel_pending_order, cancel_all_pending_orders, cancel_pending_orders_by_symbol
 
 
@@ -89,8 +89,8 @@ class MT5Order:
         return close_all_positions_by_symbol(self._connection, symbol)
 
 
-    def close_all_profittable_positions(self):
-        return close_all_profittable_positions(self._connection)
+    def close_all_profitable_positions(self):
+        return close_all_profitable_positions(self._connection)
 
     def close_all_losing_positions(self):
         return close_all_losing_positions(self._connection)

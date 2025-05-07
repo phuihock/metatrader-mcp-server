@@ -21,7 +21,7 @@ def close_position(connection, id: Union[str, int]):
     except ValueError:
         return {
             "error": True,
-            "message": f"Invalid position ID {id}",
+            "message": f"Invalid position ID '{id}', it should be a valid integer",
             "data": None,
         }
 
@@ -29,7 +29,7 @@ def close_position(connection, id: Union[str, int]):
     if positions.index.size == 0:
         return {
             "error": True,
-            "message": f"Invalid position ID {id}",
+            "message": f"Invalid position ID '{id}'",
             "data": None,
         }
     position = positions.iloc[0]

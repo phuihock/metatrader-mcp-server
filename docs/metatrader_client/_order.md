@@ -54,7 +54,7 @@ if conn.connect():
 - **close_position(id)**: Close a single position by ID.
 - **close_all_positions()**: Close all open positions.
 - **close_all_positions_by_symbol(symbol)**: Close all positions for a symbol.
-- **close_all_profittable_positions()**: Close all profitable positions.
+- **close_all_profitable_positions()**: Close all profitable positions.
 - **close_all_losing_positions()**: Close all losing positions.
 - **cancel_pending_order(id)**: Cancel a pending order by ID.
 - **cancel_all_pending_orders()**: Cancel all pending orders.
@@ -74,7 +74,7 @@ if conn.connect():
     order = MT5Order(conn)
     print(order.get_all_positions())
     order.place_market_order(type="buy", symbol="EURUSD", volume=0.1)
-    order.close_all_profittable_positions()
+    order.close_all_profitable_positions()
     conn.disconnect()
 else:
     print("Failed to connect. 🚨")
