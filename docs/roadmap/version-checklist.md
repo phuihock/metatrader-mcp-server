@@ -2,7 +2,20 @@
 
 This document act as to do list to make the project more manageable.
 
-*Last update at April 16, 2025*
+*Last update at May 8, 2025*
+
+## v0.3.0
+
+This version focuses on providing real-time streaming on account information, positions, and market rates.
+
+| Version | Feature | Done | Tested |
+| --- | --- | --- | --- |
+| 0.3.0 | Account information including live P/L | - | - |
+| 0.3.1 | Current open positions and pending orders | - | - |
+| 0.3.2 | Tick pricing of symbols from positions and pending orders | - | - |
+| 0.3.3 | Account risk monitoring | - | - |
+| 0.3.4 | User Interface to monitor those features above | - | - |
+
 
 ## v0.2.0 ✅
 
