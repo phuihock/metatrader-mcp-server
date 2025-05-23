@@ -135,6 +135,8 @@ async def place_market(
     symbol: str = Body(..., description="Symbol name"),
     volume: float = Body(..., description="Lot size"),
     type: str = Body(..., description="Order type, 'BUY' or 'SELL'"),
+    stop_loss: Optional[float] = Body(0.0, description="Stop loss price"),
+    take_profit: Optional[float] = Body(0.0, description="Take profit price"),
 ):
     """Places a market order (BUY or SELL) for a specified financial instrument.
 
@@ -142,13 +144,15 @@ async def place_market(
         symbol (str): Symbol name.
         volume (float): Lot size.
         type (str): Order type, 'BUY' or 'SELL'.
+        stop_loss (Optional[float]): Stop loss price.
+        take_profit (Optional[float]): Take profit price.
 
     Response:
         Dict[str, Any]: Placed order data.
     """
     client = request.app.state.client
     try:
-        return client.order.place_market_order(symbol=symbol, volume=volume, type=type)
+        return client.order.place_market_order(symbol=symbol, volume=volume, type=type, stop_loss=stop_loss, take_profit=take_profit)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

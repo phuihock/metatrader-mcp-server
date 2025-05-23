@@ -1,8 +1,8 @@
-from typing import Union
+from typing import Union, Optional
 from ..types import TradeRequestActions
 from .send_order import send_order
 
-def place_market_order(connection, *, type: str, symbol: str, volume: Union[float, int]):
+def place_market_order(connection, *, type: str, symbol: str, volume: Union[float, int], stop_loss: Optional[float] = 0.0, take_profit: Optional[float] = 0.0):
     """
     Places a market order for a specified financial instrument.
 
@@ -31,6 +31,8 @@ def place_market_order(connection, *, type: str, symbol: str, volume: Union[floa
         order_type=type,
         symbol=symbol,
         volume=volume,
+        stop_loss=stop_loss,
+        take_profit=take_profit,
     )
 
     if response["success"] is False:
