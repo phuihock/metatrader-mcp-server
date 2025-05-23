@@ -5,6 +5,7 @@ from metatrader_client import MT5Client
 import platform
 import time
 from datetime import datetime
+import time # Ensure time is imported, though it was already there
 
 SYMBOL = "EURUSD"
 VOLUME = 0.01
@@ -43,6 +44,89 @@ def mt5_client():
     print("\n🔌 Disconnecting from MetaTrader 5...")
     client.disconnect()
     print("👋 Disconnected!")
+
+def test_place_market_order_with_sl_tp(mt5_client):
+    """Tests placing market orders with stop loss and take profit."""
+    print("\n🧪 Testing Market Orders with SL/TP 🧪")
+    SYMBOL = "EURUSD"  # Or use the global one
+    VOLUME = 0.01
+
+    # Fetch current market price
+    current_price_info = mt5_client.market.get_symbol_price(SYMBOL)
+    assert current_price_info is not None, "Failed to fetch current market price."
+    print(f"Current {SYMBOL} prices: Bid={current_price_info['bid']}, Ask={current_price_info['ask']}")
+
+    # --- Test BUY Order with SL/TP ---
+    print(f"\n🚀 Placing BUY order for {SYMBOL} with SL/TP...")
+    order_type_buy = "BUY"
+    buy_price = current_price_info['ask']
+    stop_loss_buy = round(buy_price - 0.0010, 5)
+    take_profit_buy = round(buy_price + 0.0010, 5)
+
+    market_order_buy = mt5_client.order.place_market_order(
+        type=order_type_buy,
+        symbol=SYMBOL,
+        volume=VOLUME,
+        stop_loss=stop_loss_buy,
+        take_profit=take_profit_buy
+    )
+    print(f"BUY Order Response: {market_order_buy}")
+
+    assert market_order_buy is not None, "Market order (BUY) response is None."
+    assert market_order_buy["error"] is False, f"BUY order failed: {market_order_buy['message']}"
+    assert market_order_buy["data"] is not None, "BUY order data is None."
+    # MT5 might adjust SL/TP slightly based on broker rules (e.g., distance from price), so direct equality might fail.
+    # We should check if the SL/TP in the response are close to what we sent, or if they are not 0.0.
+    # For this test, we'll check they are not 0.0 as a basic confirmation.
+    # A more robust check would involve fetching the position details and verifying SL/TP there.
+    assert market_order_buy["data"].request.sl == stop_loss_buy, f"BUY SL mismatch: expected {stop_loss_buy}, got {market_order_buy['data'].request.sl}"
+    assert market_order_buy["data"].request.tp == take_profit_buy, f"BUY TP mismatch: expected {take_profit_buy}, got {market_order_buy['data'].request.tp}"
+    print(f"✅ BUY order for {SYMBOL} with SL={stop_loss_buy}, TP={take_profit_buy} placed successfully. Order ID: {market_order_buy['data'].order}")
+
+    time.sleep(2) # Allow broker to process
+    print(f"Attempting to close BUY position ID: {market_order_buy['data'].order}")
+    close_action_buy = mt5_client.order.close_position(market_order_buy["data"].order)
+    print(f"Close BUY Response: {close_action_buy}")
+    assert close_action_buy["error"] is False, f"Failed to close BUY position {market_order_buy['data'].order}: {close_action_buy['message']}"
+    print(f"✅ BUY position {market_order_buy['data'].order} closed successfully.")
+
+    time.sleep(5) # Interval between tests
+
+    # --- Test SELL Order with SL/TP ---
+    print(f"\n🚀 Placing SELL order for {SYMBOL} with SL/TP...")
+    # Re-fetch price info in case market moved
+    current_price_info_sell = mt5_client.market.get_symbol_price(SYMBOL)
+    assert current_price_info_sell is not None, "Failed to fetch current market price for SELL."
+    print(f"Current {SYMBOL} prices for SELL: Bid={current_price_info_sell['bid']}, Ask={current_price_info_sell['ask']}")
+
+    order_type_sell = "SELL"
+    sell_price = current_price_info_sell['bid']
+    stop_loss_sell = round(sell_price + 0.0010, 5)
+    take_profit_sell = round(sell_price - 0.0010, 5)
+
+    market_order_sell = mt5_client.order.place_market_order(
+        type=order_type_sell,
+        symbol=SYMBOL,
+        volume=VOLUME,
+        stop_loss=stop_loss_sell,
+        take_profit=take_profit_sell
+    )
+    print(f"SELL Order Response: {market_order_sell}")
+
+    assert market_order_sell is not None, "Market order (SELL) response is None."
+    assert market_order_sell["error"] is False, f"SELL order failed: {market_order_sell['message']}"
+    assert market_order_sell["data"] is not None, "SELL order data is None."
+    assert market_order_sell["data"].request.sl == stop_loss_sell, f"SELL SL mismatch: expected {stop_loss_sell}, got {market_order_sell['data'].request.sl}"
+    assert market_order_sell["data"].request.tp == take_profit_sell, f"SELL TP mismatch: expected {take_profit_sell}, got {market_order_sell['data'].request.tp}"
+    print(f"✅ SELL order for {SYMBOL} with SL={stop_loss_sell}, TP={take_profit_sell} placed successfully. Order ID: {market_order_sell['data'].order}")
+
+    time.sleep(2) # Allow broker to process
+    print(f"Attempting to close SELL position ID: {market_order_sell['data'].order}")
+    close_action_sell = mt5_client.order.close_position(market_order_sell["data"].order)
+    print(f"Close SELL Response: {close_action_sell}")
+    assert close_action_sell["error"] is False, f"Failed to close SELL position {market_order_sell['data'].order}: {close_action_sell['message']}"
+    print(f"✅ SELL position {market_order_sell['data'].order} closed successfully.")
+    print("\n🎉 Test for market orders with SL/TP completed. 🎉")
 
 def test_full_order_functionality(mt5_client):
     summary = []
