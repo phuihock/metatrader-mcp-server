@@ -7,13 +7,16 @@ from metatrader_mcp.server import mcp
 @click.option("--login", required=True, type=int, help="MT5 login ID")
 @click.option("--password", required=True, help="MT5 password")
 @click.option("--server", required=True, help="MT5 server name")
-def main(login, password, server):
+@click.option("--path", default=None, help="Path to MT5 terminal executable (optional, auto-detected if not provided)")
+def main(login, password, server, path):
     """Launch the MetaTrader MCP STDIO server."""
     load_dotenv()
     # override env vars if provided via CLI
     os.environ["login"] = str(login)
     os.environ["password"] = password
     os.environ["server"] = server
+    if path:
+        os.environ["path"] = path
     # run STDIO transport
     mcp.run(transport="stdio")
 

@@ -32,15 +32,44 @@ from metatrader_client.client import MT5Client
 ```python
 from metatrader_client.client import MT5Client
 
+# Minimal configuration
 config = {
     "login": 12345678,
     "password": "your_password",
-    "server": "Broker-Server",
-    # Optional: path, timeout, portable, debug, etc.
+    "server": "Broker-Server"
+}
+
+# Full configuration with all available options
+config = {
+    "login": 12345678,           # Required: MT5 account login number
+    "password": "your_password",  # Required: MT5 account password
+    "server": "Broker-Server",    # Required: MT5 server name
+    "path": None,                 # Optional: Path to terminal executable (auto-detect if None)
+    "timeout": 60000,             # Optional: Connection timeout in ms (default: 60000)
+    "portable": False,            # Optional: Use portable mode (default: False)
+    "max_retries": 3,             # Optional: Max connection retries (default: 3)
+    "backoff_factor": 1.5,        # Optional: Retry delay multiplier (default: 1.5)
+    "cooldown_time": 2.0,         # Optional: Seconds between connections (default: 2.0)
+    "debug": False                # Optional: Enable debug logging (default: False)
 }
 
 client = MT5Client(config)
 ```
+
+### Configuration Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `login` | int | Yes | - | Your MT5 account login number |
+| `password` | str | Yes | - | Your MT5 account password |
+| `server` | str | Yes | - | MT5 server name (e.g., "MetaQuotes-Demo") |
+| `path` | str | No | None | Full path to MT5 terminal executable (auto-detected if not provided) |
+| `timeout` | int | No | 60000 | Connection timeout in milliseconds |
+| `portable` | bool | No | False | Enable portable mode for MT5 terminal |
+| `max_retries` | int | No | 3 | Maximum number of connection retry attempts |
+| `backoff_factor` | float | No | 1.5 | Exponential backoff factor for retry delays |
+| `cooldown_time` | float | No | 2.0 | Minimum time in seconds between connection attempts |
+| `debug` | bool | No | False | Enable detailed debug logging for troubleshooting |
 
 ---
 

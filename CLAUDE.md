@@ -5,7 +5,7 @@
 MCP server enabling AI assistants to trade on MetaTrader 5 via natural language. Provides both MCP (stdio) and HTTP/REST interfaces.
 
 **Stack**: Python 3.10+ • FastMCP • FastAPI • MetaTrader5 SDK • Pandas • Pydantic • pytest
-**Version**: 0.2.8 (Beta)
+**Version**: 0.2.9 (Beta)
 **Repo**: https://github.com/ariadng/metatrader-mcp-server
 
 ---
@@ -79,7 +79,23 @@ def operation(connection, *, param: type, optional: Optional[type] = None):
 ```python
 from metatrader_client import MT5Client
 
+# Minimal configuration
 config = {"login": int(login), "password": password, "server": server}
+
+# Full configuration with all available options
+config = {
+    "login": int(login),         # Required: MT5 account login
+    "password": password,         # Required: MT5 account password
+    "server": server,             # Required: MT5 server name
+    "path": None,                 # Optional: Path to terminal executable (auto-detect if None)
+    "timeout": 60000,             # Optional: Connection timeout in ms (default: 60000)
+    "portable": False,            # Optional: Use portable mode (default: False)
+    "max_retries": 3,             # Optional: Max connection retries (default: 3)
+    "backoff_factor": 1.5,        # Optional: Retry delay multiplier (default: 1.5)
+    "cooldown_time": 2.0,         # Optional: Seconds between connections (default: 2.0)
+    "debug": False                # Optional: Enable debug logging (default: False)
+}
+
 client = MT5Client(config)
 client.connect()
 # operations...

@@ -23,7 +23,12 @@ class AppContext:
 async def app_lifespan(server: FastMCP) -> AsyncIterator[AppContext]:
 
 	try:
-		client = init(os.getenv("login"), os.getenv("password"), os.getenv("server"))
+		client = init(
+			os.getenv("login"),
+			os.getenv("password"),
+			os.getenv("server"),
+			os.getenv("path")
+		)
 		yield AppContext(client=client)
 	finally:
 		client.disconnect()
@@ -229,13 +234,15 @@ if __name__ == "__main__":
 	parser.add_argument("--login",    type=str, help="MT5 login")
 	parser.add_argument("--password", type=str, help="MT5 password")
 	parser.add_argument("--server",   type=str, help="MT5 server name")
-	
+	parser.add_argument("--path",     type=str, help="Path to MT5 terminal executable (optional)")
+
 	args = parser.parse_args()
 
 	# inject into lifespan via env vars
 	if args.login:    os.environ["login"]    = args.login
 	if args.password: os.environ["password"] = args.password
 	if args.server:   os.environ["server"]   = args.server
+	if args.path:     os.environ["path"]     = args.path
 
 	# run the MCP server (must call mcp.run)
 	mcp.run(

@@ -22,7 +22,8 @@ async def lifespan(app):
     login = os.getenv("LOGIN", os.getenv("login"))
     password = os.getenv("PASSWORD", os.getenv("password"))
     server = os.getenv("SERVER", os.getenv("server"))
-    client = init(login, password, server)
+    path = os.getenv("PATH", os.getenv("path"))
+    client = init(login, password, server, path)
     app.state.client = client
     yield
     if client:
@@ -62,6 +63,7 @@ def main():
     parser.add_argument("--login", required=True, help="MT5 login")
     parser.add_argument("--password", required=True, help="MT5 password")
     parser.add_argument("--server", required=True, help="MT5 server address")
+    parser.add_argument("--path", default=None, help="Path to MT5 terminal executable (optional, auto-detected if not provided)")
     parser.add_argument("--host", default="127.0.0.1", help="Bind host")
     parser.add_argument("--port", type=int, default=8000, help="Bind port")
     args = parser.parse_args()
@@ -73,6 +75,9 @@ def main():
     os.environ["login"] = args.login
     os.environ["password"] = args.password
     os.environ["server"] = args.server
+    if args.path:
+        os.environ["PATH"] = args.path
+        os.environ["path"] = args.path
 
     uvicorn.run(
         "metatrader_openapi.main:app",

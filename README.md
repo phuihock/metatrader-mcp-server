@@ -128,6 +128,26 @@ Pick one based on how you want to use it:
 }
 ```
 
+**Optional: Specify Custom MT5 Terminal Path**
+
+If your MT5 terminal is installed in a non-standard location, add the `--path` argument:
+
+```json
+{
+  "mcpServers": {
+    "metatrader": {
+      "command": "metatrader-mcp-server",
+      "args": [
+        "--login",    "YOUR_MT5_LOGIN",
+        "--password", "YOUR_MT5_PASSWORD",
+        "--server",   "YOUR_MT5_SERVER",
+        "--path",     "C:\\Program Files\\MetaTrader 5\\terminal64.exe"
+      ]
+    }
+  }
+}
+```
+
 3. Replace `YOUR_MT5_LOGIN`, `YOUR_MT5_PASSWORD`, and `YOUR_MT5_SERVER` with your actual credentials
 
 4. Restart Claude Desktop
@@ -140,6 +160,14 @@ Pick one based on how you want to use it:
 
 ```bash
 metatrader-http-server --login YOUR_LOGIN --password YOUR_PASSWORD --server YOUR_SERVER --host 0.0.0.0 --port 8000
+```
+
+**Optional: Specify Custom MT5 Terminal Path**
+
+If your MT5 terminal is installed in a non-standard location, add the `--path` argument:
+
+```bash
+metatrader-http-server --login YOUR_LOGIN --password YOUR_PASSWORD --server YOUR_SERVER --path "C:\Program Files\MetaTrader 5\terminal64.exe" --host 0.0.0.0 --port 8000
 ```
 
 2. Open your browser to `http://localhost:8000/docs` to see the API documentation
@@ -305,6 +333,9 @@ Instead of putting credentials in the command line, create a `.env` file:
 LOGIN=12345678
 PASSWORD=your_password
 SERVER=MetaQuotes-Demo
+
+# Optional: Specify custom MT5 terminal path (auto-detected if not provided)
+# PATH=C:\Program Files\MetaTrader 5\terminal64.exe
 ```
 
 Then start the server without arguments:
@@ -312,6 +343,8 @@ Then start the server without arguments:
 ```bash
 metatrader-http-server
 ```
+
+The server will automatically load credentials from the `.env` file.
 
 ### Custom Port and Host
 
@@ -328,13 +361,28 @@ config = {
     "login": 12345678,
     "password": "your_password",
     "server": "MetaQuotes-Demo",
-    "timeout": 60000,           # Connection timeout (ms)
-    "max_retries": 3,           # Retry attempts
-    "backoff_factor": 1.5,      # Delay multiplier between retries
-    "cooldown_time": 2.0,       # Seconds to wait between connections
-    "debug": True               # Enable debug logging
+    "path": None,               # Path to MT5 terminal executable (default: auto-detect)
+    "timeout": 60000,           # Connection timeout in milliseconds (default: 60000)
+    "portable": False,          # Use portable mode (default: False)
+    "max_retries": 3,           # Maximum connection retry attempts (default: 3)
+    "backoff_factor": 1.5,      # Delay multiplier between retries (default: 1.5)
+    "cooldown_time": 2.0,       # Seconds to wait between connections (default: 2.0)
+    "debug": True               # Enable debug logging (default: False)
 }
 ```
+
+**Configuration Options:**
+
+- **login** (int, required): Your MT5 account login number
+- **password** (str, required): Your MT5 account password
+- **server** (str, required): MT5 server name (e.g., "MetaQuotes-Demo")
+- **path** (str, optional): Full path to the MT5 terminal executable. If not specified, the client will automatically search standard installation directories
+- **timeout** (int, optional): Connection timeout in milliseconds. Default: 60000 (60 seconds)
+- **portable** (bool, optional): Enable portable mode for the MT5 terminal. Default: False
+- **max_retries** (int, optional): Maximum number of connection retry attempts. Default: 3
+- **backoff_factor** (float, optional): Exponential backoff factor for retry delays. Default: 1.5
+- **cooldown_time** (float, optional): Minimum time in seconds between connection attempts. Default: 2.0
+- **debug** (bool, optional): Enable detailed debug logging for troubleshooting. Default: False
 
 ---
 
@@ -468,7 +516,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📊 Project Stats
 
-- **Version**: 0.2.8
+- **Version**: 0.2.9
 - **Python**: 3.10+
 - **License**: MIT
 - **Status**: Active Development
